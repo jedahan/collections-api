@@ -1,0 +1,12 @@
+{ "name": "collections-scraper"
+, "version": "0.0.1"
+, "description": "scrape met museum's collections site"
+, "author": "Jonathan Dahan <jonathan@jedahan.com>"
+, "dependencies":
+  { "coffee-script": "1.3.x"
+  , "phantom": "0.3.x"
+  }
+, "scripts": {
+    "start": "coffee -w collections"
+  }
+}
