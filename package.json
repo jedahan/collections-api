@@ -7,6 +7,6 @@
   , "phantom": "0.3.x"
   }
 , "scripts": {
-    "start": "coffee -w collections"
+    "start": "phantomjs collections.coffee"
   }
 }

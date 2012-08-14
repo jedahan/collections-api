@@ -1,49 +1,47 @@
 phantom = require 'phantom'
 
 allObjects = []
+parseCollection 'http://www.metmuseum.org/collections/search-the-collections?whenfunc=before&amp;whento=2050&amp;ft=*', 0
 
-parseCollectionPage 'http://www.metmuseum.org/collections/search-the-collections?whenfunc=before&amp;whento=2050&amp;ft=*', 0
+parseCollection = (page, recursionDepth) ->
+  return if recursionDepth > 5
+  parsePage page, {mapper: mapCollection, reducer: reduceCollection}
 
 parseObject = (object) ->
+  parsePage object.url, {mapper: mapObject, reducer: reduceObject}
+
+parsePage = (uri, callback) ->
   phantom.create (ph) ->
     ph.createPage (url) ->
-      page.open object.url, (status) ->
+      page.open uri, (status) ->
         if status is 'success'
-          console.log "parsing #{object.name}"
+          console.log "parsing #{uri}"
           page.injectJs 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', ->
             setTimeout ->
-            page.evaluate ->
-              $('.definitions').each ->
-                object[$(@).find(dd)] = $(@).find(dt)
-
-              return object
-            , (result) ->
-              console.log "allObjects.push #{result}"
+              page.evaluate callback.mapper, callback.reducer
               ph.exit()
-          , 5000
+              , 5000
 
-parseCollectionPage = (page, recursionDepth) ->
-  return if recursionDepth > 5
-  phantom.create (ph) ->
-    ph.createPage (page) ->
-    page.open page, (status) ->
-      if status is 'success'
-        console.log "opened #{page}"
-        page.injectJs 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', ->
-          setTimeout ->
-            page.evaluate ->
-              nextpage = $('.next > a').attr('href')
-              collection = []
-              $('.hover-content > a').each ->
-                collection.push { name: $(@).html(), url: $(@).attr('href') }
+mapObject = (object) ->
+  parsePage object.url, ->
+  object.title ||= $('.tombstone').siblings('h2').text().trim()
+  object[$(k).text().trim()] = $($('.tombstone > dd')[i]).text().trim() for k,i in $('.tombstone > dt')
 
-              return {
-                objects: collection
-                next: nextpage
-              }
-            , (result) ->
-              console.log "parseObject #{object}" for object in result.objects
-              parseCollectionPage result.next, recursionDepth+1 # DANGER WILL ROBINSON! RECURSION AHEAD
-              console.log allObjects
-              ph.exit()
-          , 5000
+reduceObject = (result) ->
+  console.log "allObjects.push #{result}"
+
+mapCollection = ->
+  nextpage = $('.next > a').attr('href')
+  collection = []
+  $('.hover-content > a').each ->
+    collection.push { name: $(@).html(), url: $(@).attr('href') }
+
+  return {
+    objects: collection
+    next: nextpage
+  }
+
+reduceCollection = (result) ->
+  console.log "parseObject #{object}" for object in result.objects
+  parseCollection result.next, recursionDepth+1 # DANGER WILL ROBINSON! RECURSION AHEAD
+  console.log allObjects
