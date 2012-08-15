@@ -1,18 +1,19 @@
 phantom = require 'phantom'
 
+recursionDepth = 0
 allObjects = []
-parseCollection 'http://www.metmuseum.org/collections/search-the-collections?whenfunc=before&amp;whento=2050&amp;ft=*', 0
 
-parseCollection = (page, recursionDepth) ->
-  return if recursionDepth > 5
+parseCollection = (page) ->
+  console.log page
   parsePage page, {mapper: mapCollection, reducer: reduceCollection}
 
 parseObject = (object) ->
+  console.log object
   parsePage object.url, {mapper: mapObject, reducer: reduceObject}
 
 parsePage = (uri, callback) ->
   phantom.create (ph) ->
-    ph.createPage (url) ->
+    ph.createPage (page) ->
       page.open uri, (status) ->
         if status is 'success'
           console.log "parsing #{uri}"
@@ -20,15 +21,17 @@ parsePage = (uri, callback) ->
             setTimeout ->
               page.evaluate callback.mapper, callback.reducer
               ph.exit()
-              , 5000
+            , 5000
 
-mapObject = (object) ->
-  parsePage object.url, ->
-  object.title ||= $('.tombstone').siblings('h2').text().trim()
+mapObject = ->
+  object = {title: $('.tombstone').siblings('h2').text().trim()}
   object[$(k).text().trim()] = $($('.tombstone > dd')[i]).text().trim() for k,i in $('.tombstone > dt')
+  return object
 
 reduceObject = (result) ->
-  console.log "allObjects.push #{result}"
+  console.log result
+  allObjects.push result
+
 
 mapCollection = ->
   nextpage = $('.next > a').attr('href')
@@ -42,6 +45,9 @@ mapCollection = ->
   }
 
 reduceCollection = (result) ->
-  console.log "parseObject #{object}" for object in result.objects
-  parseCollection result.next, recursionDepth+1 # DANGER WILL ROBINSON! RECURSION AHEAD
+  console.log result
+  parseObject object.url for object in result.objects
+  parseCollection result.next unless recursionDepth++ > 5
   console.log allObjects
+
+parseCollection 'http://www.metmuseum.org/collections/search-the-collections?whenfunc=before&amp;whento=2050&amp;ft=*', 0
