@@ -6,11 +6,8 @@ Yes, the met museum is scraping its own [collections website][1]. Did we mention
 Install
 -------
 
-  brew install phantomjs
-  npm install
+    npm install
+    node.io listobjects
+    node.io parseobject [id]
 
-Run
----
-  npm start
-
-1: http://www.metmuseum.org/collections/
+[1]: http://www.metmuseum.org/collections/
