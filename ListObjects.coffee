@@ -10,7 +10,7 @@ class ListObjects extends nodeio.JobClass
     if @options.args[0] is 'help'
       @status usage
       @exit()
-    
+
   input: ->
     start = +@options.args[0] or 1
     end = +@options.args[1] or start+4
@@ -24,7 +24,7 @@ class ListObjects extends nodeio.JobClass
         @retry()
       else
         ids = []
-        $('.hover-content a').each -> 
+        $('.hover-content a').each ->
           ids.push /([0-9]+)/.exec($(@).attr('href'))[0]
         @emit ids
 

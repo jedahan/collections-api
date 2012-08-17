@@ -10,7 +10,7 @@ class ParseObject extends nodeio.JobClass
     if @options.args[0] is 'help'
       @status usage
       @exit()
-  
+
   input: ->
     arg = @options.args[0]
     objects = require arg if arg? and arg.search(/json$/) isnt -1
