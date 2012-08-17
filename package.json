@@ -1,12 +1,8 @@
-{ "name": "collections-scraper"
+{ "name": "metcollection_scraper"
 , "version": "0.0.1"
-, "description": "scrape met museum's collections site"
+, "description": "Scrape metmuseum collections website"
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
-  { "coffee-script": "1.3.x"
-  , "phantom": "0.3.x"
-  }
-, "scripts": {
-    "start": "phantomjs collections.coffee"
+  { "node.io": "0.4.x"
   }
 }
