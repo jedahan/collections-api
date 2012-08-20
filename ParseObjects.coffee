@@ -1,5 +1,5 @@
 usage = '''
-Usage: `$ node.io parseobject [raw_object_id|array.json]`
+Usage: `$ node.io parseobjects [raw_object_id|array.json]`
   Grab an objects info from metmuseum.org
 '''
 
