@@ -41,4 +41,4 @@ class ParseObject extends nodeio.JobClass
         @emit object
         queue.push id
 
-@job = new ParseObject {timeout: 60, jsdom: true}
+@job = new ParseObject {jsdom: true}
