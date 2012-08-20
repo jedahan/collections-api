@@ -8,7 +8,6 @@ nodeio = require 'node.io'
 class ParseObjects extends nodeio.JobClass
   runs = 0
   queue = []
-  objects = []
 
   init: ->
     arg = @options.args[0]
@@ -35,7 +34,8 @@ class ParseObjects extends nodeio.JobClass
         trim = (arr) -> text = text.trim() for text in arr
         clean = (arr) -> arr.filter (e) -> e.length
         object[$($('dt')[i]).text().trim()] = flatten clean trim $(k).text().trim().split /\r\n/ for k,i in $('dd')
-        objects.push object
-      @emit objects
+        @emit object
+
+  output: './objects.json'
 
 @job = new ParseObjects {jsdom: true}
