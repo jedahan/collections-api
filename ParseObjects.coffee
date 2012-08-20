@@ -5,13 +5,14 @@ Usage: `$ node.io parseobject [raw_object_id|array.json]`
 
 nodeio = require 'node.io'
 
-class ParseObject extends nodeio.JobClass
+class ParseObjects extends nodeio.JobClass
   runs = 0
   queue = []
   objects = []
 
   init: ->
-    if @options.args[0] is 'help' then @status usage
+    arg = @options.args[0]
+    if arg is 'help' then @status usage
     queue = require arg if arg? and arg.search(/json$/) isnt -1
     queue ?= +arg or [40000448, 40000449]
     queue = [queue] unless queue.length
@@ -35,6 +36,6 @@ class ParseObject extends nodeio.JobClass
         clean = (arr) -> arr.filter (e) -> e.length
         object[$($('dt')[i]).text().trim()] = flatten clean trim $(k).text().trim().split /\r\n/ for k,i in $('dd')
         objects.push object
-    @emit objects
+      @emit objects
 
-@job = new ParseObject {jsdom: true}
+@job = new ParseObjects {jsdom: true}
