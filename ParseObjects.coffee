@@ -19,7 +19,7 @@ class ParseObjects extends nodeio.JobClass
 
   input: (start, num, callback) ->
     callback false if start > queue.length
-    return queue[start..start+num-1]
+    queue[start..start+num-1]
 
   run: (id) ->
     @status "run #{++runs}, page #{page}"
