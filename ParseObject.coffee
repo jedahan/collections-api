@@ -4,6 +4,7 @@ Usage: `$ node.io parseobject [raw_object_id|array.json]`
 '''
 
 nodeio = require 'node.io'
+queue = []
 
 class ParseObject extends nodeio.JobClass
   init: ->
@@ -19,6 +20,7 @@ class ParseObject extends nodeio.JobClass
     objects
 
   run: (id) ->
+    return if ~queue.indexOf id
     base = 'http://www.metmuseum.org/Collections/search-the-collections/'
 
     @getHtml base+id, (err, $) =>
@@ -29,5 +31,6 @@ class ParseObject extends nodeio.JobClass
         object = {}
         object[$($('dt')[i]).text().trim()] = $(k).text().trim() for k,i in $('dd')
         @emit object
+        queue.push id
 
 @job = new ParseObject {timeout: 60, jsdom: true}
