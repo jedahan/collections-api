@@ -14,8 +14,12 @@ class ParseObject extends nodeio.JobClass
 
   input: ->
     arg = @options.args[0]
+    # if the argument contains .json, load it as an object
     objects = require arg if arg? and arg.search(/json$/) isnt -1
-    objects ?= +arg or 40000448
+    # if the argument is a number, use that as the object id
+    # if there are no arguments, pick two objects for testing
+    objects ?= +arg or [40000448, 40000449]
+    # make sure to wrap the +arg as an array
     objects = [objects] unless objects.length
     objects
 
