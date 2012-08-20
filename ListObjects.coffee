@@ -8,7 +8,6 @@ nodeio = require 'node.io'
 class ListObjects extends nodeio.JobClass
   runs = 0
   queue = []
-  ids = []
 
   init: ->
     if @options.args[0] is 'help' then @status usage
@@ -21,6 +20,7 @@ class ListObjects extends nodeio.JobClass
     return queue[start..start+num-1]
 
   run: (page) ->
+    ids = []
     @status "run #{++runs}, page #{page}"
     base = 'http://www.metmuseum.org/collections/search-the-collections?ft=*&whento=2050&whenfunc=before&rpp=60&pg='
 
@@ -30,7 +30,7 @@ class ListObjects extends nodeio.JobClass
       else
         $('.hover-content a').each ->
           ids.push /([0-9]+)/.exec($(@).attr('href'))[0]
-    @emit ids
+      @emit ids
 
   output: './ids.json'
 
