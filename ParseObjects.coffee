@@ -13,8 +13,8 @@ class ParseObjects extends nodeio.JobClass
     arg = @options.args[0]
     if arg is 'help' then @status usage
     queue = require arg if arg? and arg.search(/json$/) isnt -1
-    queue ?= +arg or [40000448, 40000449]
-    queue = [queue] unless queue.length
+    queue = @options.args unless queue.length
+    queue = [40000448, 40000449] unless queue.length
 
   input: (start, num, callback) ->
     callback false if start > queue.length
