@@ -4,27 +4,24 @@ Usage: `$ node.io parseobject [raw_object_id|array.json]`
 '''
 
 nodeio = require 'node.io'
-queue = []
 
 class ParseObject extends nodeio.JobClass
-  init: ->
-    if @options.args[0] is 'help'
-      @status usage
-      @exit()
+  runs = 0
+  queue = []
+  objects = []
 
-  input: ->
-    arg = @options.args[0]
-    # if the argument contains .json, load it as an object
-    objects = require arg if arg? and arg.search(/json$/) isnt -1
-    # if the argument is a number, use that as the object id
-    # if there are no arguments, pick two objects for testing
-    objects ?= +arg or [40000448, 40000449]
-    # make sure to wrap the +arg as an array
-    objects = [objects] unless objects.length
-    objects
+  init: ->
+    if @options.args[0] is 'help' then @status usage
+    queue = require arg if arg? and arg.search(/json$/) isnt -1
+    queue ?= +arg or [40000448, 40000449]
+    queue = [queue] unless queue.length
+
+  input: (start, num, callback) ->
+    callback false if start > queue.length
+    return queue[start..start+num-1]
 
   run: (id) ->
-    return if ~queue.indexOf id
+    @status "run #{++runs}, page #{page}"
     base = 'http://www.metmuseum.org/Collections/search-the-collections/'
 
     @getHtml base+id, (err, $) =>
@@ -37,8 +34,7 @@ class ParseObject extends nodeio.JobClass
         trim = (arr) -> text = text.trim() for text in arr
         clean = (arr) -> arr.filter (e) -> e.length
         object[$($('dt')[i]).text().trim()] = flatten clean trim $(k).text().trim().split /\r\n/ for k,i in $('dd')
-
-        @emit object
-        queue.push id
+        objects.push object
+    @emit objects
 
 @job = new ParseObject {jsdom: true}
