@@ -26,6 +26,7 @@ class ListObjects extends nodeio.JobClass
 
     @getHtml base+page, (err, $) =>
       if err?
+        @status err
         @retry()
       else
         $('.hover-content a').each ->
