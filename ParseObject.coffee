@@ -33,7 +33,11 @@ class ParseObject extends nodeio.JobClass
         @retry()
       else
         object = {}
-        object[$($('dt')[i]).text().trim()] = $(k).text().trim() for k,i in $('dd')
+        flatten = (arr) -> if arr.length is 1 then arr[0] else arr
+        trim = (arr) -> text = text.trim() for text in arr
+        clean = (arr) -> arr.filter (e) -> e.length
+        object[$($('dt')[i]).text().trim()] = flatten clean trim $(k).text().trim().split /\r\n/ for k,i in $('dd')
+
         @emit object
         queue.push id
 
