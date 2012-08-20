@@ -21,7 +21,7 @@ class ParseObjects extends nodeio.JobClass
     queue[start..start+num-1]
 
   run: (id) ->
-    @status "run #{++runs}, page #{page}"
+    @status "run #{++runs}, object #{id}"
     base = 'http://www.metmuseum.org/Collections/search-the-collections/'
 
     @getHtml base+id, (err, $) =>
