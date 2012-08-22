@@ -30,10 +30,12 @@ class ParseObjects extends nodeio.JobClass
         @retry()
       else
         object = {}
-        flatten = (arr) -> if arr.length is 1 then arr[0] else arr
-        trim = (arr) -> text = text.trim() for text in arr
-        clean = (arr) -> arr.filter (e) -> e.length
-        object[$($('dt')[i]).text().trim()] = flatten clean trim $(k).text().trim().split /\r\n/ for k,i in $('dd')
+        arrify  = (str) -> str.split /\r\n/
+        remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
+        remove_null = (arr) -> arr.filter (e) -> e.length
+        flatten = (arr) -> arr[0]
+        process = (str) -> flatten remove_null remove_nums arrify str
+        object[process $($('dt')[i]).text()] = process $(v).text() for v,i in $('dd')
         @emit object
 
   output: './objects.json'
