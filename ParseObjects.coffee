@@ -20,8 +20,10 @@ class ParseObjects extends nodeio.JobClass
       object.image = null unless /^http/.test object.image
       object[process $($('dt')[i]).text()] = process $(v).text() for v,i in $('dd')
       object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.object-info a'))
-      @emit object
+      @emit id: id, object: object
 
-  output: './objects.json'
+  output: (rows) ->
+    for row in rows
+      fs.appendFileSync "objects/#{row.id}.json", row.object
 
 @job = new ParseObjects {jsdom: true}
