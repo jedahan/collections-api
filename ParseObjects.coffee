@@ -17,10 +17,21 @@ class ParseObjects extends nodeio.JobClass
     @getHtml base+id, (err, $) =>
       @retry() if err?
 
-      object.id = +id
-      object.image = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
-      object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
+      object['id'] = +id
+      object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)[0] or null
+      object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
       object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.related-content-container .object-info a'))
+
+      # add any definition lists as properties
+      object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
+
+      # add description and provenance
+      $('.promo-accordion > li').each (i, e) ->
+        category = process $(e).find('.category').text()
+        content = $(e).find('.accordion-inner > p').text().trim()
+        switch category
+          when 'Description' then object[category] = content
+          when 'Provenance' then object[category] = trim remove_null content.split(';')
 
       @emit id: id, object: object
 
