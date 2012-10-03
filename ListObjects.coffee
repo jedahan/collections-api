@@ -18,6 +18,7 @@ class ListObjects extends nodeio.JobClass
 
   run: (page) ->
     base = 'http://www.metmuseum.org/collections/search-the-collections?ft=*&whento=2050&whenfunc=before&rpp=60&pg='
+    ids = []
 
     @getHtml base+page, (err, $) =>
       if err?
@@ -25,7 +26,8 @@ class ListObjects extends nodeio.JobClass
         @retry()
       else
         $('.hover-content a').each (i,v) =>
-          @emit page:page, id:/([0-9]+)/.exec($(v).attr('href'))[0]
+          ids.push page:page, id:/([0-9]+)/.exec($(v).attr('href'))[0]
+        @emit ids
 
   output: (rows) ->
     for row in rows
