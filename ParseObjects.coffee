@@ -1,4 +1,5 @@
 nodeio = require 'node.io'
+fs = require 'fs'
 
 class ParseObjects extends nodeio.JobClass
   runs = 0
@@ -24,6 +25,6 @@ class ParseObjects extends nodeio.JobClass
 
   output: (rows) ->
     for row in rows
-      fs.appendFileSync "objects/#{row.id}.json", row.object
+      fs.writeFileSync "objects/#{row.id}.json", JSON.stringify row.object, null, 2
 
 @job = new ParseObjects {jsdom: true}
