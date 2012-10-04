@@ -10,7 +10,6 @@ class ListObjects extends nodeio.JobClass
       return 1 if err?
       pages = (file.split('.')[0] for file in files)
       queue = _.difference queue,pages
-      @status queue
 
   input: (start,num,callback) ->
     callback false if start > queue.length
