@@ -17,7 +17,7 @@ class ParseObjects extends nodeio.JobClass
       @retry() if err?
 
       object['id'] = +id
-      object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)[0] or null
+      object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)?[0] or null
       object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
       object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.related-content-container .object-info a'))
 
