@@ -26,7 +26,7 @@ class ParseObjects extends nodeio.JobClass
 
       # add description and provenance
       $('.promo-accordion > li').each (i, e) ->
-        category = process $(e).find('.category').text()
+        category = _process $(e).find('.category').text()
         content = $(e).find('.accordion-inner > p').text().trim()
         switch category
           when 'Description' then object[category] = content
