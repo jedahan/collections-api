@@ -7,6 +7,7 @@ class ParseObjects extends nodeio.JobClass
   _remove_null = (arr) -> arr.filter (e) -> e.length
   _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
   _process = (str) -> _flatten _remove_null _remove_nums _arrify str
+  _trim = (arr) -> str.trim() for str in arr
 
   run: (id) ->
     base = 'http://www.metmuseum.org/Collections/search-the-collections/'
@@ -29,7 +30,7 @@ class ParseObjects extends nodeio.JobClass
         content = $(e).find('.accordion-inner > p').text().trim()
         switch category
           when 'Description' then object[category] = content
-          when 'Provenance' then object[category] = trim remove_null content.split(';')
+          when 'Provenance' then object[category] = _trim _remove_null content.split(';')
 
       @emit id: id, object: object
 
