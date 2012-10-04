@@ -2,8 +2,6 @@ nodeio = require 'node.io'
 fs = require 'fs'
 
 class ParseObjects extends nodeio.JobClass
-  runs = 0
-
   _arrify  = (str) -> str.split /\r\n/
   _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
   _remove_null = (arr) -> arr.filter (e) -> e.length
