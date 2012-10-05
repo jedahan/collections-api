@@ -5,6 +5,12 @@ cheerio = require 'cheerio'
 class ListObjects extends nodeio.JobClass
   queue: [1..6072]
 
+  init: ->
+    max=0
+    for id in @queue
+      max = id if fs.existsSync "./ids/#{id}.json" and id > max
+    @queue = @queue[max...@length]
+
   input: (start,num,callback) ->
     return false if start > @queue.length
     return @queue[start...@length] if start+num-1 > @queue.length
