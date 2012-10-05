@@ -23,8 +23,11 @@ class ListObjects extends nodeio.JobClass
           ids.push page:page, id:/([0-9]+)/.exec($(v).attr('href'))[0]
         @emit ids
 
+  reduce: (lines) ->
+    @emit page:lines[0].page, ids:lines.map (pairs) -> pairs.id
+
   output: (rows) ->
-    for row in rows
-      fs.appendFileSync "ids/#{row.page}.json", "#{row.id}\n"
+    fs.writeFile "./ids/#{rows.page}.json", JSON.stringify(rows.ids, null, 2), (err) ->
+      @exit err if err?
 
 @job = new ListObjects jsdom: true
