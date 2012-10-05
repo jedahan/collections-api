@@ -30,4 +30,4 @@ class ListObjects extends nodeio.JobClass
     fs.writeFile "./ids/#{rows.page}.json", JSON.stringify(rows.ids, null, 2), (err) ->
       @exit err if err?
 
-@job = new ListObjects jsdom: true
+@job = new ListObjects jsdom: true, max: 10
