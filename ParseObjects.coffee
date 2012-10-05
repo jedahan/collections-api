@@ -17,7 +17,8 @@ class ParseObjects extends nodeio.JobClass
     fs.readdir './ids/', (err, files) =>
       @exit err if err?
       for file in files
-        @queue.push require "./ids/#{file}" if file isnt 'american-wing.json'
+        if file.match(/json$/)?[0] and file isnt 'american-wing.json'
+          @queue.push id for id in require "./ids/#{file}"
 
   input: (start,num,callback) ->
     return false if start > @queue.length
