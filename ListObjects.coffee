@@ -1,5 +1,6 @@
 nodeio = require 'node.io'
 fs = require 'fs'
+cheerio = require 'cheerio'
 
 class ListObjects extends nodeio.JobClass
   queue: [1..6072]
@@ -14,7 +15,8 @@ class ListObjects extends nodeio.JobClass
     base = 'http://www.metmuseum.org/collections/search-the-collections?ft=*&whento=2050&whenfunc=before&rpp=60&pg='
     ids = []
 
-    @getHtml base+page, (err, $) =>
+    @get base+page, (err, data) =>
+      $ = cheerio.load data
       if err?
         @status err
         @retry()
@@ -30,4 +32,4 @@ class ListObjects extends nodeio.JobClass
     fs.writeFile "./ids/#{rows.page}.json", JSON.stringify(rows.ids, null, 2), (err) ->
       @exit err if err?
 
-@job = new ListObjects jsdom: true, max: 10
+@job = new ListObjects max: 10
