@@ -1,19 +1,14 @@
 nodeio = require 'node.io'
 fs = require 'fs'
-_ = require 'lodash'
 
 class ListObjects extends nodeio.JobClass
-  queue = [1..6057]
-
-  init: =>
-    fs.readdir './ids/', (err, files) =>
-      return 1 if err?
-      pages = (file.split('.')[0] for file in files)
-      queue = _.difference queue,pages
+  queue: [1..6072]
 
   input: (start,num,callback) ->
-    callback false if start > queue.length
-    queue[start..start+num-1]
+    return false if start > @queue.length
+    return @queue[start...@length] if start+num-1 > @queue.length
+    @status "#{@queue[start...start+num]}"
+    @queue[start...start+num]
 
   run: (page) ->
     base = 'http://www.metmuseum.org/collections/search-the-collections?ft=*&whento=2050&whenfunc=before&rpp=60&pg='
