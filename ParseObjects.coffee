@@ -1,13 +1,27 @@
 nodeio = require 'node.io'
 fs = require 'fs'
+start = require './ids/american-wing.json'
+
+_arrify  = (str) -> str.split /\r\n/
+_remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
+_remove_null = (arr) -> arr.filter (e) -> e.length
+_flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
+_process = (str) -> _flatten _remove_null _remove_nums _arrify str
+_trim = (arr) -> str.trim() for str in arr
 
 class ParseObjects extends nodeio.JobClass
-  _arrify  = (str) -> str.split /\r\n/
-  _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
-  _remove_null = (arr) -> arr.filter (e) -> e.length
-  _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
-  _process = (str) -> _flatten _remove_null _remove_nums _arrify str
-  _trim = (arr) -> str.trim() for str in arr
+  queue: start
+
+  init: ->
+    fs.readdir './ids/', (err, files) =>
+      @exit err if err?
+      for file in files
+        @queue.push require "./ids/#{file}" if file isnt 'american-wing.json'
+
+  input: (start,num,callback) ->
+    return false if start > @queue.length
+    return @queue[start...@length] if start+num-1 > @queue.length
+    @queue[start...start+num]
 
   run: (id) ->
     base = 'http://www.metmuseum.org/Collections/search-the-collections/'
