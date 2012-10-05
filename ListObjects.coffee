@@ -19,6 +19,7 @@ class ListObjects extends nodeio.JobClass
 
   run: (page) ->
     base = 'http://www.metmuseum.org/collections/search-the-collections?ft=*&whento=2050&whenfunc=before&rpp=60&pg='
+    delete ids
     ids = []
 
     @get base+page, (err, data) =>
