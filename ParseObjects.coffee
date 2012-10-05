@@ -1,6 +1,7 @@
 nodeio = require 'node.io'
 fs = require 'fs'
 start = require './ids/american-wing.json'
+cheerio = require 'cheerio'
 
 _arrify  = (str) -> str.split /\r\n/
 _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
@@ -28,7 +29,8 @@ class ParseObjects extends nodeio.JobClass
     delete object
     object = {}
 
-    @getHtml base+id, (err, $) =>
+    @get base+id, (err, data) =>
+      $ = cheerio.load data
       @retry() if err?
 
       object['id'] = +id
