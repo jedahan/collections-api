@@ -25,6 +25,7 @@ class ParseObjects extends nodeio.JobClass
 
   run: (id) ->
     base = 'http://www.metmuseum.org/Collections/search-the-collections/'
+    delete object
     object = {}
 
     @getHtml base+id, (err, $) =>
@@ -48,8 +49,9 @@ class ParseObjects extends nodeio.JobClass
 
       @emit id: id, object: object
 
+
   output: (rows) ->
     for row in rows
       fs.writeFileSync "objects/#{row.id}.json", JSON.stringify row.object, null, 2
 
-@job = new ParseObjects {jsdom: true}
+@job = new ParseObjects jsdom: true, max: 10
