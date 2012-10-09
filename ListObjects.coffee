@@ -6,10 +6,7 @@ class ListObjects extends nodeio.JobClass
   queue: [1..6072]
 
   init: ->
-    max=0
-    for id in @queue
-      max = id if fs.existsSync "./ids/#{id}.json" and id > max
-    @queue = @queue[max...@length]
+    @queue.filter (id) -> not fs.existsSync "./ids/#{id}.json"
 
   input: (start,num,callback) ->
     return false if start > @queue.length
