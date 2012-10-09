@@ -54,7 +54,6 @@ class ParseObjects extends nodeio.JobClass
 
       @emit id: id, object: object
 
-
   output: (rows) ->
     for row in rows
       fs.writeFileSync "objects/#{row.id}.json", JSON.stringify row.object, null, 2
