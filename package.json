@@ -4,5 +4,6 @@
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
   { "node.io": "0.4.x"
+  , "cheerio": "0.10.x"
   }
 }
