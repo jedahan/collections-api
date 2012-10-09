@@ -16,9 +16,10 @@ class ParseObjects extends nodeio.JobClass
   init: ->
     fs.readdir './ids/', (err, files) =>
       @exit err if err?
-      for file in files
-        if file.match(/json$/)?[0] and file isnt 'american-wing.json'
-          @queue.push id for id in require "./ids/#{file}"
+      for idFile in files
+        if idFile.match(/json$/)?[0] and idFile isnt 'american-wing.json'
+          for id in require "./ids/#{idFile}"
+            @queue.push id if not fs.existsSync "./objects/#{id}.json"
 
   input: (start,num,callback) ->
     return false if start > @queue.length
