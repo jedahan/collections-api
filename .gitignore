@@ -1,4 +1,5 @@
+.DS_Store
 *js
 *json
+*log
 node_modules
-.DS_Store
