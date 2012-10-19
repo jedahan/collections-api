@@ -1,7 +1,8 @@
-nodeio = require 'node.io'
-fs = require 'fs'
-start = require './ids/american-wing.json'
+restify = require 'restify'
+request = require 'request'
 cheerio = require 'cheerio'
+
+base = 'http://www.metmuseum.org/Collections/search-the-collections/'
 
 _arrify  = (str) -> str.split /\r\n/
 _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
@@ -10,32 +11,17 @@ _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
 
-class ParseObjects extends nodeio.JobClass
-  queue: start
+parseId = (req, response, next) ->
+  id = +req.params.id
+  console.log "Parsing #{id}"
+  request {uri: base+id}, (err, res, body) ->
+    # if there is a redirect, send a 404
+    if res.request.redirects.length
+      response.send 404
+    else
+      $ = cheerio.load body
 
-  init: ->
-    fs.readdir './ids/', (err, files) =>
-      @exit err if err?
-      for idFile in files
-        if idFile.match(/json$/)?[0] and idFile isnt 'american-wing.json'
-          for id in require "./ids/#{idFile}"
-            @queue.push id if not fs.existsSync "./objects/#{id}.json"
-
-  input: (start,num,callback) ->
-    return false if start > @queue.length
-    return @queue[start...@length] if start+num-1 > @queue.length
-    @status "#{@queue[start...start+num]}"
-    @queue[start...start+num]
-
-  run: (id) ->
-    base = 'http://www.metmuseum.org/Collections/search-the-collections/'
-    delete object
-    object = {}
-
-    @get base+id, (err, data) =>
-      $ = cheerio.load data
-      @retry() if err?
-
+      object = {}
       object['id'] = +id
       object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)?[0] or null
       object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
@@ -52,10 +38,21 @@ class ParseObjects extends nodeio.JobClass
           when 'Description' then object[category] = content
           when 'Provenance' then object[category] = _trim _remove_null content.split(';')
 
-      @emit id: id, object: object
+      response.send object
 
-  output: (rows) ->
-    for row in rows
-      fs.writeFileSync "objects/#{row.id}.json", JSON.stringify row.object, null, 2
+server = restify.createServer()
 
-@job = new ParseObjects jsdom: true, max: 10
+server.get  "/:id", parseId
+server.head '/:id', parseId
+
+server.use restify.throttle
+  burst: 100
+  rate: 50
+  ip: true
+  overrides:
+    '192.168.1.1':
+      rate: 0
+      burst: 0
+
+server.listen 8080, ->
+  console.log "#{server.name} listening at #{server.url}"

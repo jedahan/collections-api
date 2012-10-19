@@ -1,9 +1,11 @@
-{ "name": "metcollection_scraper"
+{ "name": "collections-api"
 , "version": "0.0.1"
-, "description": "Scrape metmuseum collections website"
+, "description": "frontend api services"
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
-  { "node.io": "0.4.x"
-  , "cheerio": "0.10.x"
+  { "cheerio": "0.10.x"
+  , "request": "2.11.x"
+  , "restify": "1.4.x"
   }
+, "scripts": {"start": "coffee server"}
 }
