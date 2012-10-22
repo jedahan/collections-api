@@ -2,8 +2,9 @@ restify = require 'restify'
 request = require 'request'
 cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
+redis = require 'redis'
 
-base = 'http://www.metmuseum.org/Collections/search-the-collections/'
+client = redis.createClient port: 6380
 
 _arrify  = (str) -> str.split /\r\n/
 _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
@@ -38,22 +39,34 @@ _parseObject = (id, body, cb) ->
 
   cb err, object
 
+  client.on 'error', (err) ->
+    console.log "Error #{err}"
+
 getObject = (req, response, next) ->
   id = +req.params.id
   if not id
     return next new restify.InvalidArgumentError "id is not a number"
   else
     console.log "Parsing #{id}"
-    request {uri: base+id}, (err, res, body) ->
-      # if there is a redirect, we can't find that object
-      if res.request.redirects.length
-        return next new restify.ResourceNotFoundError "object #{id} not found"
+    client.exists id, (err, reply) ->
+      console.log "Error #{err}" if err?
+      if reply
+        client.get id, (err, reply) ->
+          console.log "Error #{err}" if err?
+          response.send JSON.parse reply
       else
-        _parseObject id, body, (err, object) ->
-          if err?
-            return next err
+        request {uri: "http://www.metmuseum.org/Collections/search-the-collections/#{id}"}, (err, res, body) ->
+          # if there is a redirect, we can't find that object
+          if res.request.redirects.length
+            return next new restify.ResourceNotFoundError "object #{id} not found"
           else
-            response.send object
+            _parseObject id, body, (err, object) ->
+              if err?
+                return next err
+              else
+                client.set id, JSON.stringify(object), redis.print
+                response.send object
+
 
 server = restify.createServer()
 
