@@ -69,12 +69,17 @@ docs = swagger.createResource '/object'
 docs.get "/object/{id}", "Gets information about a specific object in the collection",
   nickname: "getObject"
   parameters: [
-    {name:'id', description: 'Id of object', required:true, dataType: 'int', paramType: 'path'}
+    {name: 'id', description: 'Id of object', required: true, dataType: 'int', paramType: 'path'}
   ]
 
 ###
   Server Options
 ###
+
+# look in header for accept: type
+server.use restify.acceptParser server.acceptable
+server.use restify.authorizationParser()
+server.use restify.queryParser()
 
 server.use restify.throttle
   burst: 100
