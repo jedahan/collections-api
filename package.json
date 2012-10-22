@@ -6,6 +6,7 @@
   { "cheerio": "0.10.x"
   , "request": "2.11.x"
   , "restify": "1.4.x"
+  , "swagger-doc": "0.1.x"
   }
 , "scripts": {"start": "coffee server"}
 }
