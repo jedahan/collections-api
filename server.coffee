@@ -4,7 +4,7 @@ cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
 redis = require 'redis'
 
-client = redis.createClient port: 6380
+cache = redis.createClient port: 6380
 
 _arrify  = (str) -> str.split /\r\n/
 _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
@@ -39,7 +39,7 @@ _parseObject = (id, body, cb) ->
 
   cb err, object
 
-  client.on 'error', (err) ->
+  cache.on 'error', (err) ->
     console.log "Error #{err}"
 
 getObject = (req, response, next) ->
@@ -48,10 +48,10 @@ getObject = (req, response, next) ->
     return next new restify.InvalidArgumentError "id is not a number"
   else
     console.log "Parsing #{id}"
-    client.exists id, (err, reply) ->
+    cache.exists "objects:#{id}", (err, reply) ->
       console.log "Error #{err}" if err?
       if reply
-        client.get id, (err, reply) ->
+        cache.get "objects:#{id}", (err, reply) ->
           console.log "Error #{err}" if err?
           response.send JSON.parse reply
       else
@@ -60,11 +60,11 @@ getObject = (req, response, next) ->
           if res.request.redirects.length
             return next new restify.ResourceNotFoundError "object #{id} not found"
           else
-            _parseObject id, body, (err, object) ->
+            _parseObject "objects:#{id}", body, (err, object) ->
               if err?
                 return next err
               else
-                client.set id, JSON.stringify(object), redis.print
+                cache.set "objects:#{id}", JSON.stringify(object), redis.print
                 response.send object
 
 
