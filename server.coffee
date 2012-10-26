@@ -21,10 +21,10 @@ _parseObject = (id, body, cb) ->
   $ = cheerio.load body
 
   object = {}
-  object['id'] = +id
+  object['id'] = +id or null
   object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)?[0] or null
   object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
-  object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.related-content-container .object-info a'))
+  object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.related-content-container .object-info a')) or null
 
   # add any definition lists as properties
   object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
@@ -36,6 +36,8 @@ _parseObject = (id, body, cb) ->
     switch category
       when 'Description' then object[category] = content
       when 'Provenance' then object[category] = _trim _remove_null content.split(';')
+
+  delete object[key] for key,value of object when value is null
 
   cb err, object
 
