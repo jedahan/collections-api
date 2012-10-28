@@ -4,7 +4,7 @@ cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
 redis = require 'redis'
 
-cache = redis.createClient port: 6380
+cache = redis.createClient()
 
 _arrify  = (str) -> str.split /\r\n/
 _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
@@ -109,5 +109,5 @@ server.use restify.throttle
       rate: 0
       burst: 0
 
-server.listen 80, ->
+server.listen ->
   console.log "#{server.name} listening at #{server.url}"
