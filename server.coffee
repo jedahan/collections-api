@@ -15,10 +15,9 @@ _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
 _parseObject = (id, body, cb) ->
-  err = null
-  err ?= new Error "id missing" unless id?
-  err ?= new Error "body empty" unless body?
-  err ?= new Error "missing callback" unless cb?
+  throw new Error "id missing" unless id?
+  throw new Error "body empty" unless body?
+  throw new Error "missing callback" unless cb?
 
   $ = cheerio.load body
 
