@@ -1,5 +1,5 @@
 { "name": "collections-api"
-, "version": "0.0.1"
+, "version": "0.0.2"
 , "description": "frontend api services"
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
@@ -8,5 +8,11 @@
   , "restify": "1.4.x"
   , "swagger-doc": "0.1.x"
   }
-, "scripts": {"start": "coffee server"}
+, "devDependencies":
+  { "api-easy": "0.3.x"
+  }
+, "scripts":
+  { "start": "coffee server"
+  , "test": "coffee test/*test.coffee"
+  }
 }
