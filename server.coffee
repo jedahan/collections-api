@@ -45,7 +45,7 @@ _parseObject = (id, body, cb) ->
 getObject = (req, response, next) ->
   id = +req.params.id
   if not id
-    return next new restify.InvalidArgumentError "id is not a number"
+    next new restify.InvalidArgumentError "id '#{req.params.id}' is not a number"
   else
     console.log "Parsing #{id}"
     cache.exists "objects:#{id}", (err, reply) ->
@@ -58,7 +58,7 @@ getObject = (req, response, next) ->
         request {uri: "http://www.metmuseum.org/Collections/search-the-collections/#{id}"}, (err, res, body) ->
           # if there is a redirect, we can't find that object
           if res.request.redirects.length
-            return next new restify.ResourceNotFoundError "object #{id} not found"
+            next new restify.ResourceNotFoundError "object #{id} not found"
           else
             _parseObject "objects:#{id}", body, (err, object) ->
               if err?
