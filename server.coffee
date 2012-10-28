@@ -40,7 +40,10 @@ _parseObject = (id, body, cb) ->
 
   delete object[key] for key,value of object when value is null
 
-  cb err, object
+  if +(object["Date"]?.match(/[0-9]{4}/)[0]) > new Date().getFullYear() - 70
+    return cb new Error "Object may not be in public domain", null
+
+  cb null, object
 
 getObject = (req, response, next) ->
   id = +req.params.id
@@ -62,7 +65,7 @@ getObject = (req, response, next) ->
           else
             _parseObject "objects:#{id}", body, (err, object) ->
               if err?
-                return next err
+                next new restify.ForbiddenError err.message
               else
                 cache.set "objects:#{id}", JSON.stringify(object), redis.print
                 response.send object
