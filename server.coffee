@@ -48,7 +48,7 @@ _parseObject = (id, body, cb) ->
 getObject = (req, response, next) ->
   id = +req.params.id
   if not id
-    next new restify.InvalidArgumentError "id '#{req.params.id}' is not a number"
+    next new restify.UnprocessableEntityError "id '#{req.params.id}' is not a number"
   else
     console.log "Parsing #{id}"
     cache.exists "objects:#{id}", (err, reply) ->
