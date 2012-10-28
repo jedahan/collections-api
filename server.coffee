@@ -5,6 +5,8 @@ swagger = require 'swagger-doc'
 redis = require 'redis'
 
 cache = redis.createClient()
+cache.on 'error', (err) ->
+  console.log "Error #{err}"
 
 _arrify  = (str) -> str.split /\r\n/
 _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
@@ -40,9 +42,6 @@ _parseObject = (id, body, cb) ->
   delete object[key] for key,value of object when value is null
 
   cb err, object
-
-  cache.on 'error', (err) ->
-    console.log "Error #{err}"
 
 getObject = (req, response, next) ->
   id = +req.params.id
