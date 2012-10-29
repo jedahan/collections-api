@@ -63,13 +63,12 @@ getObject = (req, response, next) ->
           if res.request.redirects.length
             next new restify.ResourceNotFoundError "object #{id} not found"
           else
-            _parseObject "objects:#{id}", body, (err, object) ->
+            _parseObject id, body, (err, object) ->
               if err?
                 next new restify.ForbiddenError err.message
               else
                 cache.set "objects:#{id}", JSON.stringify(object), redis.print
                 response.send object
-
 
 server = restify.createServer()
 
