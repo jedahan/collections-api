@@ -112,5 +112,5 @@ server.use restify.throttle
       rate: 0
       burst: 0
 
-server.listen ->
+server.listen process.env.PORT or 8080, ->
   console.log "#{server.name} listening at #{server.url}"
