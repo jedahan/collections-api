@@ -4,6 +4,7 @@
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
   { "cheerio": "0.10.x"
+  , "redis": "0.8.x"
   , "request": "2.11.x"
   , "restify": "1.4.x"
   , "swagger-doc": "0.1.x"

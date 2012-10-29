@@ -4,7 +4,9 @@ cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
 redis = require 'redis'
 
-cache = redis.createClient()
+redis_url = process.env.REDISTOGO_URL or '127.0.0.1'
+cache = redis.createClient(6379, redis_url)
+
 cache.on 'error', (err) ->
   console.log "Error #{err}"
 
