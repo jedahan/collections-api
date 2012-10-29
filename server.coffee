@@ -17,6 +17,13 @@ _remove_null = (arr) -> arr.filter (e) -> e.length
 _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
+_extract_year = (str) ->
+  t = str.split '–'
+  t = t[t.length-1]
+  year = +(t.match(/[0-9]+/)[0])
+  year *= -1 if t.match(/b.c/gi)?
+  return year
+
 _parseObject = (id, body, cb) ->
   throw new Error "id missing" unless id?
   throw new Error "body empty" unless body?
@@ -43,7 +50,7 @@ _parseObject = (id, body, cb) ->
 
   delete object[key] for key,value of object when value is null
 
-  if +(object["Date"]?.match(/[0-9]{4}/)[0]) > new Date().getFullYear() - 70
+  if _extract_year(object["Date"]) > new Date().getFullYear() - 70
     return cb new Error "Object may not be in public domain", null
 
   cb null, object
