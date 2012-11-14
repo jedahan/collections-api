@@ -94,7 +94,7 @@ docs = swagger.createResource '/object'
 docs.get "/object/{id}", "Gets information about a specific object in the collection",
   nickname: "getObject"
   parameters: [
-    {name: 'id', description: 'Id of object', required: true, dataType: 'int', paramType: 'path'}
+    {name: 'id', description: 'Id of object, as used on website collections section', required: true, dataType: 'int', paramType: 'path'}
   ]
 
 ###
