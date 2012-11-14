@@ -39,6 +39,7 @@ _parseObject = (id, body, cb) ->
 
   # add any definition lists as properties
   object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
+  object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
 
   # add description and provenance
   $('.promo-accordion > li').each (i, e) ->
