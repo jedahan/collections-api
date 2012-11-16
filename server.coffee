@@ -11,28 +11,38 @@ cache = redis.createClient redis_url.port, redis_url.hostname
 cache.on 'error', (err) ->
   console.log "Error #{err}"
 
+scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
+
 _arrify  = (str) -> str.split /\r\n/
 _remove_nums = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
 _remove_null = (arr) -> arr.filter (e) -> e.length
 _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
-_extract_year = (str) ->
+_year_made = (str) ->
   t = str.split '–'
   t = t[t.length-1]
   year = +(t.match(/[0-9]+/)[0])
   year *= -1 if t.match(/b.c/gi)?
   return year
 
+_on_loan = (str) ->
+  ! str[0].match(/[0-9]/g)?[0]
+
 _parseObject = (id, body, cb) ->
-  throw new Error "id missing" unless id?
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
 
   $ = cheerio.load body
 
+  if _on_loan $('.accession-num').text()
+    return cb new NotAuthorizedError "Object is on loan, view at #{scrape_url}/#{id}", null
+
+  if _year_made $('.date').text() > new Date().getFullYear() - 70
+    return cb new NotAuthorizedError "Object may not be in public domain, view at #{scrape_url}/#{id}", null
+
   object = {}
-  object['id'] = +id or null
+  object['id'] = id
   object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)?[0] or null
   object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
   object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.related-content-container .object-info a')) or null
@@ -51,35 +61,33 @@ _parseObject = (id, body, cb) ->
 
   delete object[key] for key,value of object when value is null
 
-  if object["Date"]? and _extract_year(object["Date"]) > new Date().getFullYear() - 70
-    return cb new Error "Object may not be in public domain", null
-
   cb null, object
 
 getObject = (req, response, next) ->
   id = +req.params.id
-  if not id
-    next new restify.UnprocessableEntityError "id '#{req.params.id}' is not a number"
-  else
-    console.log "Parsing #{id}"
-    cache.exists "objects:#{id}", (err, reply) ->
-      console.log "Error #{err}" if err?
-      if reply
-        cache.get "objects:#{id}", (err, reply) ->
-          console.log "Error #{err}" if err?
-          response.send JSON.parse reply
-      else
-        request {uri: "http://www.metmuseum.org/Collections/search-the-collections/#{id}"}, (err, res, body) ->
-          # if there is a redirect, we can't find that object
-          if res.request.redirects.length
-            next new restify.ResourceNotFoundError "object #{id} not found"
-          else
-            _parseObject id, body, (err, object) ->
-              if err?
-                next new restify.ForbiddenError err.message
-              else
-                cache.set "objects:#{id}", JSON.stringify(object), redis.print
-                response.send object
+  next new restify.UnprocessableEntityError "id missing" unless id?
+  next new restify.UnprocessableEntityError "id '#{req.params.id}' is not a number" if id is NaN
+
+  console.info "Parsing #{id}"
+  cache.exists "objects:#{id}", (err, reply) ->
+    console.error "Error #{err}" if err?
+    if reply
+      cache.get "objects:#{id}", (err, reply) ->
+        console.error "Error #{err}" if err?
+        response.send JSON.parse reply
+    else
+      request {uri: "#{scrape_url}/#{id}"}, (err, res, body) ->
+        # if there is a redirect, we can't find that object
+        if res.request.redirects.length
+          next new restify.ResourceNotFoundError "object #{id} not found"
+        else
+          _parseObject id, body, (err, object) ->
+            if err?
+              next new restify.ForbiddenError err.message
+              # should this be `throw err` or should it throw 1 deeper?
+            else
+              cache.set "objects:#{id}", JSON.stringify(object), redis.print
+              response.send object
 
 server = restify.createServer()
 
