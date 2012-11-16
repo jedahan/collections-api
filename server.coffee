@@ -6,7 +6,7 @@ redis = require 'redis'
 url = require 'url'
 
 redis_url = url.parse(process.env.REDISTOGO_URL or 'http://127.0.0.1:6379')
-cache = redis.createClient(redis_url.port, redis_url.hostname)
+cache = redis.createClient redis_url.port, redis_url.hostname
 
 cache.on 'error', (err) ->
   console.log "Error #{err}"
