@@ -23,7 +23,9 @@ _year_made = (str) ->
   t = str.split '–'
   t = t[t.length-1]
   year = +(t.match(/[0-9]+/)[0])
-  year *= -1 if t.match(/b.c/gi)?
+  year *= 100 if t.match(/century/gi)?
+  year *= 1000 if t.match(/mill[\.]/gi)?
+  year *= -1 if t.match(/b[\.]c/gi)?
   return year
 
 _on_loan = (str) ->
