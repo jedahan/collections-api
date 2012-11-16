@@ -28,6 +28,7 @@ _year_made = (str) ->
   year *= -1 if t.match(/b[\.]c/gi)?
   return year
 
+# if the first character is non-numeric, its a loan item
 _on_loan = (str) ->
   ! str[0].match(/[0-9]/g)?[0]
 
@@ -36,22 +37,25 @@ _parseObject = (id, body, cb) ->
   throw new Error "missing callback" unless cb?
 
   $ = cheerio.load body
+  object = {}
 
-  if _on_loan $('.accession-num').text()
+  # Add all definition lists as properties
+  object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
+
+  # Check if the object is on loan
+  if object['Accession Number'] is null or _on_loan object['Accession Number']
     return cb new NotAuthorizedError "Object is on loan, view at #{scrape_url}/#{id}", null
 
-  if _year_made $('.date').text() > new Date().getFullYear() - 70
+  # Check that the object is in the public domain (end date at least 70 years old)
+  if object['Date'] is null or _year_made object['Date'] > new Date().getFullYear() - 70
     return cb new NotAuthorizedError "Object may not be in public domain, view at #{scrape_url}/#{id}", null
 
-  object = {}
+  object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
+
   object['id'] = id
   object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)?[0] or null
   object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
   object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.related-content-container .object-info a')) or null
-
-  # add any definition lists as properties
-  object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
-  object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
 
   # add description and provenance
   $('.promo-accordion > li').each (i, e) ->
