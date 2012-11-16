@@ -30,7 +30,7 @@ _year_made = (str) ->
 
 # if the first character is non-numeric, its a loan item
 _on_loan = (str) ->
-  ! str[0].match(/[0-9]/g)?[0]
+  not str[0].match(/[0-9]/g)?
 
 _parseObject = (id, body, cb) ->
   throw new Error "body empty" unless body?
@@ -44,11 +44,11 @@ _parseObject = (id, body, cb) ->
 
   # Check if the object is on loan
   if object['Accession Number'] is null or _on_loan object['Accession Number']
-    return cb new NotAuthorizedError "Object is on loan, view at #{scrape_url}/#{id}", null
+    return cb new restify.NotAuthorizedError "Object is on loan, view at #{scrape_url}/#{id}"
 
   # Check that the object is in the public domain (end date at least 70 years old)
   if object['Date'] is null or _year_made object['Date'] > new Date().getFullYear() - 70
-    return cb new NotAuthorizedError "Object may not be in public domain, view at #{scrape_url}/#{id}", null
+    return cb new restify.NotAuthorizedError "Object may not be in public domain, view at #{scrape_url}/#{id}"
 
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
 
