@@ -67,6 +67,9 @@ _parseObject = (id, body, cb) ->
 
   delete object[key] for key,value of object when value is null
 
+  if not object.Date? or _extract_year object.Date > new Date().getFullYear() - 70
+    return cb new Error "Object may not be in public domain", null
+
   cb null, object
 
 getObject = (req, response, next) ->
