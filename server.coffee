@@ -19,6 +19,8 @@ _remove_null = (arr) -> arr.filter (e) -> e.length
 _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
+_on_loan = (str) -> not str[0].match(/[0-9]/g)?
+
 _year_made = (str) ->
   t = str.split '–'
   t = t[t.length-1]
@@ -27,10 +29,6 @@ _year_made = (str) ->
   year *= 1000 if t.match(/mill[\.]/gi)?
   year *= -1 if t.match(/b[\.]c/gi)?
   return year
-
-# if the first character is non-numeric, its a loan item
-_on_loan = (str) ->
-  not str[0].match(/[0-9]/g)?
 
 _parseObject = (id, body, cb) ->
   throw new Error "body empty" unless body?
@@ -43,7 +41,7 @@ _parseObject = (id, body, cb) ->
   object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
 
   # Check if the object is on loan
-  if object['Accession Number'] is null or _on_loan object['Accession Number']
+  unless object['Accession Number']? and not _on_loan object['Accession Number']
     return cb new restify.NotAuthorizedError "Object is on loan, view at #{scrape_url}/#{id}"
 
   # Check that the object is in the public domain (end date at least 70 years old)
