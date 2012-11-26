@@ -21,20 +21,24 @@ _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
 _on_loan = (str) -> not str[0].match(/[0-9]/g)?
 
-_year_made = (str) ->
-  # get the last year found in the string
-  years = str.match(/[0-9]+/g)
-  longest_year=0
+_public_domain = (str) ->
+  return true if str.match(/b[\.]c/)?
+  return true if str.match(/cent[\.]/gi)?
+
+  years = str.match /[0-9]+/g
+  last_year = +years[years.length-1]
+
+  longest_year = '0'
   for year in years
-    longest_year = year if year.length > "#{longest_year}".length
-  last_year = years[years.length-1]
-  year = +longest_year
-  # grab the suffix
-  suffix = str[str.indexOf("#{year}")..str.length]
-  # check if anything after the split matches
-  year *= 100 if suffix.match(/cent[\.]|th\ |st\ |nd\ /gi)?
-  year *= -1 if suffix.match(/b[\.]c/gi)?
-  return year
+    longest_year = +year if year.length >= "#{longest_year}".length
+
+  if last_year is longest_year
+    year = last_year
+  else
+    round = 10^("#{last_year}".length-1)
+    year = Math.round(round*longest_year)/round + last_year
+
+  return year < new Date().getFullYear() - 70
 
 _parseObject = (id, body, cb) ->
   throw new Error "body empty" unless body?
@@ -47,11 +51,11 @@ _parseObject = (id, body, cb) ->
   object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
 
   # Check if the object is on loan
-  unless object['Accession Number']? and not _on_loan object['Accession Number']
+  if object['Accession Number'] is null or _on_loan object['Accession Number']
     return cb new restify.NotAuthorizedError "Object is on loan, view at #{scrape_url}/#{id}"
 
   # Check that the object is in the public domain (end date at least 70 years old)
-  unless object['Date']? and _year_made object['Date'] < new Date().getFullYear() - 70
+  if object['Date'] is null or not _public_domain object['Date']
     return cb new restify.NotAuthorizedError "Object may not be in public domain, view at #{scrape_url}/#{id}"
 
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
