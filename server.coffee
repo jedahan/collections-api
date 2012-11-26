@@ -22,12 +22,18 @@ _trim = (arr) -> str.trim() for str in arr
 _on_loan = (str) -> not str[0].match(/[0-9]/g)?
 
 _year_made = (str) ->
-  t = str.split '–'
-  t = t[t.length-1]
-  year = +(t.match(/[0-9]+/)[0])
-  year *= 100 if t.match(/century/gi)?
-  year *= 1000 if t.match(/mill[\.]/gi)?
-  year *= -1 if t.match(/b[\.]c/gi)?
+  # get the last year found in the string
+  years = str.match(/[0-9]+/g)
+  longest_year=0
+  for year in years
+    longest_year = year if year.length > "#{longest_year}".length
+  last_year = years[years.length-1]
+  year = +longest_year
+  # grab the suffix
+  suffix = str[str.indexOf("#{year}")..str.length]
+  # check if anything after the split matches
+  year *= 100 if suffix.match(/cent[\.]|th\ |st\ |nd\ /gi)?
+  year *= -1 if suffix.match(/b[\.]c/gi)?
   return year
 
 _parseObject = (id, body, cb) ->
@@ -45,11 +51,10 @@ _parseObject = (id, body, cb) ->
     return cb new restify.NotAuthorizedError "Object is on loan, view at #{scrape_url}/#{id}"
 
   # Check that the object is in the public domain (end date at least 70 years old)
-  if object['Date'] is null or _year_made object['Date'] > new Date().getFullYear() - 70
+  unless object['Date']? and _year_made object['Date'] < new Date().getFullYear() - 70
     return cb new restify.NotAuthorizedError "Object may not be in public domain, view at #{scrape_url}/#{id}"
 
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
-
   object['id'] = id
   object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)?[0] or null
   object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
@@ -64,9 +69,6 @@ _parseObject = (id, body, cb) ->
       when 'Provenance' then object[category] = _trim _remove_null content.split(';')
 
   delete object[key] for key,value of object when value is null
-
-  if not object.Date? or _extract_year object.Date > new Date().getFullYear() - 70
-    return cb new Error "Object may not be in public domain", null
 
   cb null, object
 
