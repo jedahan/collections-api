@@ -100,18 +100,5 @@ server.use restify.acceptParser server.acceptable
 server.use restify.authorizationParser()
 server.use restify.queryParser()
 
-# we can set username: true and remove ip: true but then we have issues with all anon users being
-# in the same bucket :/
-# maybe read about x-forwarded-for?
-# we want to throttle by ip except if a key is set
-server.use restify.throttle
-  burst: 100
-  rate: 50
-  ip: true
-  overrides:
-    '192.168.1.1':
-      rate: 0
-      burst: 0
-
 server.listen process.env.PORT or 8080, ->
   console.log "#{server.name} listening at #{server.url}"
