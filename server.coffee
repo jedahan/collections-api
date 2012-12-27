@@ -4,6 +4,7 @@ cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
 redis = require 'redis'
 url = require 'url'
+async = require 'async'
 
 redis_url = url.parse(process.env.REDISTOGO_URL or 'http://127.0.0.1:6379')
 cache = redis.createClient redis_url.port, redis_url.hostname
@@ -74,6 +75,7 @@ getObject = (req, response, next) ->
               cache.set "objects:#{id}", JSON.stringify(object), redis.print
               response.send object
 
+_exists = (item, cb) -> cb item?
 
 _parseIds = (path, body, cb) ->
   page = + /(\d+)/.exec(path)[0]
@@ -86,15 +88,17 @@ _parseIds = (path, body, cb) ->
 
   ids['ids'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.object-image')) or null
 
-  links = [{'rel':'self', 'href':path}]
+  self = {'rel':'self', 'href':path}
 
   if $('.pagination .next a').attr('href')?
-    links << {'rel':'next', 'href': path.replace /(\d+)/, page+1 }
+    next = {'rel':'next', 'href': path.replace /(\d+)/, page+1 }
   if $('.pagination .prev a').attr('href')?
-    links << {'rel':'prev', 'href': path.replace /(\d+)/, page-1 }
+    prev = {'rel':'prev', 'href': path.replace /(\d+)/, page-1 }
 
-  ids['links'] = links
-  cb null, ids
+  async.filter [self, next, prev], _exists , (results) ->
+    ids['links'] = results
+
+    cb null, ids
 
 getIds = (req, response, next) ->
   page = +req.params.page
