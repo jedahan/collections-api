@@ -126,6 +126,9 @@ getIds = (req, response, next) ->
   Server Options
 ###
 server = restify.createServer()
+server.use restify.acceptParser server.acceptable
+server.use restify.authorizationParser()
+server.use restify.queryParser()
 
 swagger.configure server, basePath: "http://localhost"
 
