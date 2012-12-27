@@ -1,4 +1,4 @@
-Here is the beginnings of an front-end api. It scrapes from the met museum's [collections][1] website.
+Here is an api built off the metropolitan museum's [collections][1] website.
 
     npm install
     npm start
