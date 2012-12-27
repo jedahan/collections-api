@@ -74,6 +74,57 @@ getObject = (req, response, next) ->
               cache.set "objects:#{id}", JSON.stringify(object), redis.print
               response.send object
 
+
+_parseIds = (path, body, cb) ->
+  page = + /(\d+)/.exec(path)[0]
+  console.info "Parsing page #{page} of ids"
+  throw new Error "body empty" unless body?
+  throw new Error "missing callback" unless cb?
+
+  $ = cheerio.load body
+  ids = {}
+
+  ids['ids'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.object-image')) or null
+
+  links = [{'rel':'self', 'href':path}]
+
+  if $('.pagination .next a').attr('href')?
+    links << {'rel':'next', 'href': path.replace /(\d+)/, page+1 }
+  if $('.pagination .prev a').attr('href')?
+    links << {'rel':'prev', 'href': path.replace /(\d+)/, page-1 }
+
+  ids['links'] = links
+  cb null, ids
+
+getIds = (req, response, next) ->
+  page = +req.params.page
+  next new restify.UnprocessableEntityError "page missing" unless page?
+  next new restify.UnprocessableEntityError "page '#{req.params.page}' is not a number" if page is NaN
+
+  console.info "Showing page #{page} of ids"
+  cache.exists "ids:#{page}", (err, reply) ->
+    console.error "Error #{err}" if err?
+    if reply
+      cache.get "ids:#{page}", (err, reply) ->
+        console.error "Error #{err}" if err?
+        response.send JSON.parse reply
+    else
+      request {uri: "#{scrape_url}?rpp=60&pg=#{page}"}, (err, res, body) ->
+        # if there is a redirect, we can't find that page
+        if res.request.redirects.length
+          next new restify.ResourceNotFoundError "page #{page} not found"
+        else
+          _parseIds req.path, body, (err, ids) ->
+            if err?
+              next new restify.ForbiddenError err.message
+              # should this be `throw err` or should it throw 1 deeper?
+            else
+              cache.set "ids:#{page}", JSON.stringify(page), redis.print
+              response.send ids
+
+###
+  Server Options
+###
 server = restify.createServer()
 
 swagger.configure server, basePath: "http://localhost"
@@ -92,13 +143,18 @@ docs.get "/object/{id}", "Gets information about a specific object in the collec
   ]
 
 ###
-  Server Options
+  Object API
 ###
 
-# look in header for accept: type
-server.use restify.acceptParser server.acceptable
-server.use restify.authorizationParser()
-server.use restify.queryParser()
+server.get  "/ids/:page", getIds
+server.head "/ids/:page", getIds
+docs = swagger.createResource '/ids'
+docs.get "/object/{page}", "Gets a list of ids found in the collection",
+  nickname: "getIds"
+  parameters: [
+    {name: 'page', description: 'Page number of ids, as used on website collections section. Will return 60 at a time.', required: true, dataType: 'int', paramType: 'path'}
+  ]
+
 
 server.listen process.env.PORT or 8080, ->
   console.log "#{server.name} listening at #{server.url}"
