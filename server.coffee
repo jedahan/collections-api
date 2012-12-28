@@ -21,7 +21,7 @@ _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
 
-_parseObject = (id, body, cb) ->
+_parseObject = (path, body, cb) ->
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
 
@@ -32,7 +32,7 @@ _parseObject = (id, body, cb) ->
   object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
 
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
-  object['id'] = id
+  object['id'] = path.match(/[0-9]+/g)[0]
   object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)?[0] or null
   object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
   object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.related-content-container .object-info a')) or null
@@ -46,6 +46,7 @@ _parseObject = (id, body, cb) ->
       when 'Provenance' then object[category] = _trim _remove_null content.split(';')
 
   delete object[key] for key,value of object when value is null
+  object['links'] = [{'rel':'self', 'href':path}]
 
   cb null, object
 
@@ -67,7 +68,7 @@ getObject = (req, response, next) ->
         if res.request.redirects.length
           next new restify.ResourceNotFoundError "object #{id} not found"
         else
-          _parseObject id, body, (err, object) ->
+          _parseObject req.path, body, (err, object) ->
             if err?
               next new restify.ForbiddenError err.message
               # should this be `throw err` or should it throw 1 deeper?
