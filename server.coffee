@@ -68,7 +68,7 @@ getObject = (req, response, next) ->
         if res.request.redirects.length
           next new restify.ResourceNotFoundError "object #{id} not found"
         else
-          _parseObject req.path, body, (err, object) ->
+          _parseObject req.getPath(), body, (err, object) ->
             if err?
               next new restify.ForbiddenError err.message
               # should this be `throw err` or should it throw 1 deeper?
@@ -119,7 +119,7 @@ getIds = (req, response, next) ->
         if res.request.redirects.length
           next new restify.ResourceNotFoundError "page #{page} not found"
         else
-          _parseIds req.path, body, (err, ids) ->
+          _parseIds req.getPath(), body, (err, ids) ->
             if err?
               next new restify.ForbiddenError err.message
               # should this be `throw err` or should it throw 1 deeper?
