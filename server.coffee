@@ -20,14 +20,42 @@ _remove_null = (arr) -> arr.filter (e) -> e.length
 _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
+_exists = (item, cb) -> cb item?
 
-_getCache = (str) ->
-  cache.exists str, (err, reply) ->
-    console.error "Error #{err}" if err?
+_scrape = (type, url, parser, req, res, next) ->
+  id = +req.params.id
+  cache_id = "#{type}:#{id}"
+  next new restify.UnprocessableEntityError "id missing" unless id?
+  next new restify.UnprocessableEntityError "#{type} #{id} is not a number" if id is NaN
+
+  console.log "Scraping #{type} #{id}"
+  cache.exists cache_id, (err, reply) ->
+    console.error err if err?
     if reply
-      cache.get str, (err, reply) ->
-        console.error "Error #{err}" if err?
-        reply
+      cache.get cache_id, (err, reply) ->
+        console.error err if err?
+        res.send JSON.parse reply
+    else
+      request url+id, (err, response, body) ->
+        console.error err if err?
+        # if there is a redirect, we can't find that id
+        if response.request.redirects.length
+          next new restify.ResourceNotFoundError "#{type} #{id} not found"
+        else
+          parser req.getPath(), body, (err, result) ->
+            if err?
+              next new restify.ForbiddenError err.message
+              # should this be `throw err` or should it throw 1 deeper?
+            else
+              cache.set cache_id, JSON.stringify(result), redis.print
+              res.send result
+
+getIds = (req, res, next) ->
+  _scrape 'ids', "#{scrape_url}?rpp=60&pg=", _parseIds, req, res, next
+
+getObject = (req, res, next) ->
+  _scrape 'object', "#{scrape_url}/", _parseObject, req, res, next
+
 
 _parseObject = (path, body, cb) ->
   throw new Error "body empty" unless body?
@@ -58,31 +86,6 @@ _parseObject = (path, body, cb) ->
 
   cb null, object
 
-getObject = (req, response, next) ->
-  id = +req.params.id
-  next new restify.UnprocessableEntityError "id missing" unless id?
-  next new restify.UnprocessableEntityError "id '#{req.params.id}' is not a number" if id is NaN
-
-  console.info "Getting object #{id}"
-  _getCache "objects:#{id}", (reply) ->
-    if reply
-      response.send JSON.parse reply
-    else
-      request {uri: "#{scrape_url}/#{id}"}, (err, res, body) ->
-        # if there is a redirect, we can't find that object
-        if res.request.redirects.length
-          next new restify.ResourceNotFoundError "object #{id} not found"
-        else
-          _parseObject req.getPath(), body, (err, object) ->
-            if err?
-              next new restify.ForbiddenError err.message
-              # should this be `throw err` or should it throw 1 deeper?
-            else
-              cache.set "objects:#{id}", JSON.stringify(object), redis.print
-              response.send object
-
-_exists = (item, cb) -> cb item?
-
 _parseIds = (path, body, cb) ->
   page = + /(\d+)/.exec(path)[0]
   console.info "Parsing page #{page} of ids"
@@ -105,29 +108,6 @@ _parseIds = (path, body, cb) ->
     ids['links'] = results
 
     cb null, ids
-
-getIds = (req, response, next) ->
-  page = +req.params.page
-  next new restify.UnprocessableEntityError "page missing" unless page?
-  next new restify.UnprocessableEntityError "page '#{req.params.page}' is not a number" if page is NaN
-
-  console.info "Showing page #{page} of ids"
-  _getCache "ids:#{page}", (reply) ->
-    if reply
-      response.send JSON.parse reply
-    else
-      request {uri: "#{scrape_url}?rpp=60&pg=#{page}"}, (err, res, body) ->
-        # if there is a redirect, we can't find that page
-        if res.request.redirects.length
-          next new restify.ResourceNotFoundError "page #{page} not found"
-        else
-          _parseIds req.getPath(), body, (err, ids) ->
-            if err?
-              next new restify.ForbiddenError err.message
-              # should this be `throw err` or should it throw 1 deeper?
-            else
-              cache.set "ids:#{page}", JSON.stringify(page), redis.print
-              response.send ids
 
 ###
   Server Options
@@ -153,16 +133,16 @@ docs.get "/object/{id}", "Gets information about a specific object in the collec
   ]
 
 ###
-  Object API
+  IDs API
 ###
 
-server.get  "/ids/:page", getIds
-server.head "/ids/:page", getIds
+server.get  "/ids/:id", getIds
+server.head "/ids/:id", getIds
 docs = swagger.createResource '/ids'
-docs.get "/object/{page}", "Gets a list of ids found in the collection",
+docs.get "/object/{id}", "Gets a list of ids found in the collection",
   nickname: "getIds"
   parameters: [
-    {name: 'page', description: 'Page number of ids, as used on website collections section. Will return 60 at a time.', required: true, dataType: 'int', paramType: 'path'}
+    {name: 'id', description: 'Page number of ids, as used on website collections section. Will return 60 at a time.', required: true, dataType: 'int', paramType: 'path'}
   ]
 
 
