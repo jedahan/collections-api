@@ -21,6 +21,14 @@ _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
 
+_getCache = (str) ->
+  cache.exists str, (err, reply) ->
+    console.error "Error #{err}" if err?
+    if reply
+      cache.get str, (err, reply) ->
+        console.error "Error #{err}" if err?
+        reply
+
 _parseObject = (path, body, cb) ->
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
@@ -55,13 +63,10 @@ getObject = (req, response, next) ->
   next new restify.UnprocessableEntityError "id missing" unless id?
   next new restify.UnprocessableEntityError "id '#{req.params.id}' is not a number" if id is NaN
 
-  console.info "Parsing #{id}"
-  cache.exists "objects:#{id}", (err, reply) ->
-    console.error "Error #{err}" if err?
+  console.info "Getting object #{id}"
+  _getCache "objects:#{id}", (reply) ->
     if reply
-      cache.get "objects:#{id}", (err, reply) ->
-        console.error "Error #{err}" if err?
-        response.send JSON.parse reply
+      response.send JSON.parse reply
     else
       request {uri: "#{scrape_url}/#{id}"}, (err, res, body) ->
         # if there is a redirect, we can't find that object
@@ -107,12 +112,9 @@ getIds = (req, response, next) ->
   next new restify.UnprocessableEntityError "page '#{req.params.page}' is not a number" if page is NaN
 
   console.info "Showing page #{page} of ids"
-  cache.exists "ids:#{page}", (err, reply) ->
-    console.error "Error #{err}" if err?
+  _getCache "ids:#{page}", (reply) ->
     if reply
-      cache.get "ids:#{page}", (err, reply) ->
-        console.error "Error #{err}" if err?
-        response.send JSON.parse reply
+      response.send JSON.parse reply
     else
       request {uri: "#{scrape_url}?rpp=60&pg=#{page}"}, (err, res, body) ->
         # if there is a redirect, we can't find that page
