@@ -88,7 +88,6 @@ _parseObject = (path, body, cb) ->
 
 _parseIds = (path, body, cb) ->
   page = + /(\d+)/.exec(path)[0]
-  console.info "Parsing page #{page} of ids"
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
 
