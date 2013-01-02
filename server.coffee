@@ -21,6 +21,7 @@ _flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
 _process = (str) -> _flatten _remove_null _remove_nums _arrify str
 _trim = (arr) -> str.trim() for str in arr
 _exists = (item, cb) -> cb item?
+_get_id = (el) -> +(el?.attr('href')?.match(/\d+/)?[0])
 
 _scrape = (type, url, parser, req, res, next) ->
   id = +req.params.id
@@ -68,10 +69,10 @@ _parseObject = (path, body, cb) ->
   object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
 
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
-  object['id'] = path.match(/[0-9]+/g)[0]
-  object['gallery-id'] = +$('.gallery-id a').text().match(/[0-9]+/g)?[0] or null
+  object['id'] = + /\d+/.exec(path)[0]
+  object['gallery-id'] = _get_id($('.gallery-id a')) or null
   object['image'] = _flatten $('a[name="art-object-fullscreen"] > img')?.attr('src')?.match /(^http.*)/g
-  object['related-artworks'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.related-content-container .object-info a')) or null
+  object['related-artworks'] = ((_get_id $(a)) for a in $('.related-content-container .object-info a')) or null
 
   # add description and provenance
   $('.promo-accordion > li').each (i, e) ->
@@ -87,14 +88,14 @@ _parseObject = (path, body, cb) ->
   cb null, object
 
 _parseIds = (path, body, cb) ->
-  page = + /(\d+)/.exec(path)[0]
+  page = + /\d+/.exec(path)[0]
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
 
   $ = cheerio.load body
   ids = {}
 
-  ids['ids'] = (+($(a).attr('href').match(/[0-9]+/g)[0]) for a in $('.object-image')) or null
+  ids['ids'] = ((_get_id $(a)) for a in $('.object-image')) or null
 
   self = {'rel':'self', 'href':path}
 
