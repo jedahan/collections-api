@@ -99,9 +99,9 @@ _parseIds = (path, body, cb) ->
   self = {'rel':'self', 'href':path}
 
   if $('.pagination .next a').attr('href')?
-    next = {'rel':'next', 'href': path.replace /(\d+)/, page+1 }
+    next = {'rel':'next', 'href': path.replace /\d+/, page+1 }
   if $('.pagination .prev a').attr('href')?
-    prev = {'rel':'prev', 'href': path.replace /(\d+)/, page-1 }
+    prev = {'rel':'prev', 'href': path.replace /\d+/, page-1 }
 
   async.filter [self, next, prev], _exists , (results) ->
     ids['links'] = results
