@@ -68,6 +68,7 @@ _parseObject = (path, body, cb) ->
   # Add all definition lists as properties
   object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
 
+  # make sure Where always returns an array
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
   object['id'] = + /\d+/.exec(path)[0]
   object['gallery-id'] = _get_id($('.gallery-id a')) or null
