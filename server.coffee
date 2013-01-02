@@ -26,7 +26,7 @@ _scrape = (type, url, parser, req, res, next) ->
   id = +req.params.id
   cache_id = "#{type}:#{id}"
   next new restify.UnprocessableEntityError "id missing" unless id?
-  next new restify.UnprocessableEntityError "#{type} #{id} is not a number" if id is NaN
+  next new restify.UnprocessableEntityError "#{type} #{id} is not a number" if isNaN id
 
   console.log "Scraping #{type} #{id}"
   cache.exists cache_id, (err, reply) ->
