@@ -114,9 +114,9 @@ _parseIds = (path, body, cb) ->
   Server Options
 ###
 server = restify.createServer()
-server.use restify.acceptParser server.acceptable
-server.use restify.authorizationParser()
-server.use restify.queryParser()
+server.use restify.acceptParser server.acceptable # respond correctly to accept headers
+server.use restify.queryParser() # parse query variables
+server.use restify.fullResponse() # set CORS, eTag, other common headers
 
 swagger.configure server, basePath: "http://localhost"
 
