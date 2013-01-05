@@ -10,7 +10,7 @@ redis_url = url.parse(process.env.REDISTOGO_URL or 'http://127.0.0.1:6379')
 cache = redis.createClient redis_url.port, redis_url.hostname
 
 cache.on 'error', (err) ->
-  console.log "Error #{err}"
+  console.error err
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
