@@ -26,12 +26,10 @@ _get_id = (el) -> +(el?.attr('href')?.match(/\d+/)?[0])
 _check_cache = (options) ->
   (req, res, next) ->
     if req.method is 'GET'
-      cache.exists req.getPath(), (err, reply) ->
+      cache.get req.getPath(), (err, reply) ->
         console.error err if err?
-        if reply
-          cache.get req.getPath(), (err, reply) ->
-            console.error err if err?
-            res.send JSON.parse reply
+        if reply?
+          res.send JSON.parse reply
         else
           next()
     else
