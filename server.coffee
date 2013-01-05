@@ -23,39 +23,45 @@ _trim = (arr) -> str.trim() for str in arr
 _exists = (item, cb) -> cb item?
 _get_id = (el) -> +(el?.attr('href')?.match(/\d+/)?[0])
 
-_scrape = (type, url, parser, req, res, next) ->
-  id = +req.params.id
-  cache_id = "#{type}:#{id}"
-  next new restify.UnprocessableEntityError "id missing" unless id?
-  next new restify.UnprocessableEntityError "#{type} #{id} is not a number" if isNaN id
-
-  console.log "Scraping #{type} #{id}"
-  cache.exists cache_id, (err, reply) ->
-    console.error err if err?
-    if reply
-      cache.get cache_id, (err, reply) ->
+_check_cache = (options) ->
+  (req, res, next) ->
+    if req.method is 'GET'
+      cache.exists req.getPath(), (err, reply) ->
         console.error err if err?
-        res.send JSON.parse reply
-    else
-      request url+id, (err, response, body) ->
-        console.error err if err?
-        # if there is a redirect, we can't find that id
-        if response.request.redirects.length
-          next new restify.ResourceNotFoundError "#{type} #{id} not found"
+        if reply
+          cache.get req.getPath(), (err, reply) ->
+            console.error err if err?
+            res.send JSON.parse reply
         else
-          parser req.getPath(), body, (err, result) ->
-            if err?
-              next new restify.ForbiddenError err.message
-              # should this be `throw err` or should it throw 1 deeper?
-            else
-              cache.set cache_id, JSON.stringify(result), redis.print
-              res.send result
+          next()
+    else
+      next()
+
+_scrape = (url, parser, req, res, next) ->
+  id = +req.params.id
+  next new restify.UnprocessableEntityError "id missing" unless id?
+  next new restify.UnprocessableEntityError "#{id} is not a number" if isNaN id
+
+  console.log "Scraping #{id}"
+  request url+id, (err, response, body) ->
+    console.error err if err?
+    # if there is a redirect, we can't find that id
+    if response.request.redirects.length
+      next new restify.ResourceNotFoundError "#{id} not found"
+    else
+      parser req.getPath(), body, (err, result) ->
+        if err?
+          next new restify.ForbiddenError err.message
+          # should this be `throw err` or should it throw 1 deeper?
+        else
+          cache.set req.getPath(), JSON.stringify(result), redis.print
+          res.send result
 
 getIds = (req, res, next) ->
-  _scrape 'ids', "#{scrape_url}?rpp=60&pg=", _parseIds, req, res, next
+  _scrape "#{scrape_url}?rpp=60&pg=", _parseIds, req, res, next
 
 getObject = (req, res, next) ->
-  _scrape 'object', "#{scrape_url}/", _parseObject, req, res, next
+  _scrape "#{scrape_url}/", _parseObject, req, res, next
 
 
 _parseObject = (path, body, cb) ->
@@ -118,6 +124,8 @@ server.use restify.acceptParser server.acceptable # respond correctly to accept 
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers
 
+server.use _check_cache()
+
 swagger.configure server, basePath: "http://localhost"
 
 ###
@@ -145,7 +153,6 @@ docs.get "/object/{id}", "Gets a list of ids found in the collection",
   parameters: [
     {name: 'id', description: 'Page number of ids, as used on website collections section. Will return 60 at a time.', required: true, dataType: 'int', paramType: 'path'}
   ]
-
 
 server.listen process.env.PORT or 8080, ->
   console.log "#{server.name} listening at #{server.url}"
