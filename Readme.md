@@ -25,4 +25,6 @@ Here is an api built off the metropolitan museum's [collections][1] website.
   * Set `COLLECTIONS_API_NO_CACHE` to stop trying to connect to the redis cache
 
 
+This code is [CC0](http://creativecommons.org/publicdomain/zero/1.0/), and dedicated to the memory of [Aaron Swartz](http://en.wikipedia.org/wiki/Aaron_Swartz).
+
 [1]: http://www.metmuseum.org/collections
