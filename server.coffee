@@ -6,11 +6,7 @@ redis = require 'redis'
 url = require 'url'
 async = require 'async'
 
-redis_url = url.parse(process.env.REDISTOGO_URL or 'http://127.0.0.1:6379')
-cache = redis.createClient redis_url.port, redis_url.hostname
-
-cache.on 'error', (err) ->
-  console.error err
+NO_CACHE = process.env.COLLECTIONS_API_NOCACHE
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
@@ -24,6 +20,12 @@ _exists = (item, cb) -> cb item?
 _get_id = (el) -> +(el.attr('href')?.match(/\d+/)?[0])
 
 _check_cache = (options) ->
+  redis_url = url.parse(process.env.REDISTOGO_URL or 'http://127.0.0.1:6379')
+  cache = redis.createClient redis_url.port, redis_url.hostname
+
+  cache.on 'error', (err) ->
+    console.error err
+
   (req, res, next) ->
     if req.method is 'GET'
       cache.get req.getPath(), (err, reply) ->
@@ -52,7 +54,8 @@ _scrape = (url, parser, req, res, next) ->
           next new restify.ForbiddenError err.message
           # should this be `throw err` or should it throw 1 deeper?
         else
-          cache.set req.getPath(), JSON.stringify(result), redis.print
+          unless NO_CACHE
+            cache.set req.getPath(), JSON.stringify(result), redis.print
           res.send result
 
 getIds = (req, res, next) ->
@@ -122,7 +125,8 @@ server.use restify.acceptParser server.acceptable # respond correctly to accept 
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers
 
-server.use _check_cache()
+unless NO_CACHE
+  server.use _check_cache()
 
 swagger.configure server, basePath: "http://localhost"
 

@@ -1,5 +1,5 @@
 { "name": "collections-api"
-, "version": "0.0.3"
+, "version": "0.0.4"
 , "description": "frontend api services"
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
