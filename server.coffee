@@ -126,6 +126,7 @@ _parseIds = (path, body, cb) ->
 ###
 server = restify.createServer()
 server.pre _root_redirect
+server.pre restify.pre.userAgentConnection()
 server.use restify.acceptParser server.acceptable # respond correctly to accept headers
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers
