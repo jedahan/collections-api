@@ -5,7 +5,9 @@ Setup
     npm install
     npm start
     npm test
-    open http://localhost:8080/ids/1
+    open http://localhost/index.html
+
+    You may need `sudo npm start` if your user is not allowed to open port 80.
 
 Usage
 

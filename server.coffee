@@ -156,5 +156,11 @@ docs.get "/object/{id}", "Gets a list of ids found in the collection",
     {name: 'id', description: 'Page number of ids, as used on website collections section. Will return 60 at a time.', required: true, dataType: 'int', paramType: 'path'}
   ]
 
-server.listen process.env.PORT or 8080, ->
+###
+  Documentation
+###
+server.get /\/*/, restify.serveStatic directory: './static'
+
+
+server.listen process.env.PORT or 80, ->
   console.log "#{server.name} listening at #{server.url}"
