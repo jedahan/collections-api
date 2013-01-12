@@ -19,6 +19,10 @@ _trim = (arr) -> str.trim() for str in arr
 _exists = (item, cb) -> cb item?
 _get_id = (el) -> +(el.attr('href')?.match(/\d+/)?[0])
 
+_root_redirect = (req, res, next) ->
+  req.url = '/index.html' if req.url is '/'
+  next()
+
 _check_cache = (options) ->
   redis_url = url.parse(process.env.REDISTOGO_URL or 'http://127.0.0.1:6379')
   cache = redis.createClient redis_url.port, redis_url.hostname
@@ -121,6 +125,7 @@ _parseIds = (path, body, cb) ->
   Server Options
 ###
 server = restify.createServer()
+server.pre _root_redirect
 server.use restify.acceptParser server.acceptable # respond correctly to accept headers
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers
