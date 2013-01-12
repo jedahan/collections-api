@@ -21,6 +21,6 @@
   }
 , "scripts":
   { "start": "coffee server"
-  , "test": "coffee test/*test.coffee"
+  , "test": "COLLECTIONS_API_NOCACHE= coffee test/*test.coffee"
   }
 }
