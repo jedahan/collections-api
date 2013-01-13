@@ -23,4 +23,8 @@
   { "start": "coffee server"
   , "test": "COLLECTIONS_API_NOCACHE= coffee test/*test.coffee"
   }
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/jedahan/collections-api.git"
+  }
 }
