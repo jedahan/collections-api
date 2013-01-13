@@ -156,7 +156,7 @@ docs.get "/object/{id}", "Gets information about a specific object in the collec
 server.get  "/ids/:id", getIds
 server.head "/ids/:id", getIds
 docs = swagger.createResource '/ids'
-docs.get "/object/{id}", "Gets a list of ids found in the collection",
+docs.get "/ids/{id}", "Gets a list of ids found in the collection",
   nickname: "getIds"
   parameters: [
     {name: 'id', description: 'Page number of ids, as used on website collections section. Will return 60 at a time.', required: true, dataType: 'int', paramType: 'path'}
