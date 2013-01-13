@@ -1,1 +1,1 @@
-web: coffee server
+web: npm start
