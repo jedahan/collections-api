@@ -1,44 +1,41 @@
-Here is an api built off the metropolitan museum's [collections][collections] website
+Here is a [CC0][] api built by scraping the metropolitan museum's [collections][] website.
 
-A testing version is available on [http://collections-api.herokuapp.com][testing]
+A live version is available on [collections-api.herokuapp.com][].
 
-Questions, bug reports and feature requests are appreciated, please submit them to [github issues][issues]
+Please submit all questions, bugs and feature requests to [the issue page][].
+
+Dedicated to the memory of [Aaron Swartz][].
 
 #### Setup
+  
+  The API requires [node.js][], recommends [redis][], and supports [dtrace][].
 
-    npm install
-    npm start # you may need sudo for port 80
-    npm test
+  Node comes with npm, so `npm install` to grab all the dependencies, and `sudo npm start` to start the server. Make sure all the tests pass with `npm test`. Try not to ignore the console errors - install redis (`brew install redis` on OSX) and reap the benefits of a much faster api. Redis also reduces the load on the metropolitan musuem's website, which is a good thing :)
 
-#### Tools
+#### Usage
 
-  A nice graphical api browser is included [http://localhost][localhost]
+  Visit [localhost][localhost] to browse the api, pretty UI courtesy of [swagger][swagger].
 
-#### URLs
-
-  * `/ids/:page` List a bunch of ids, where `:page` is some number, starting with `1`
-  * `/object/:id` List an objects information, where `:id` is some id from `/ids/:page`
-
-#### Dependencies
-
-  * node.js
-  * redis [optional]
-  * dtrace [optional]
+  The [restify][restify] framework has first-class support for [DTrace][dtrace], so enjoy the performance analysation tools.
 
 #### Options
 
-  * Set `COLLECTIONS_API_NO_CACHE` to ignore caching
+  * Set `COLLECTIONS_API_NO_CACHE` to ignore the redis cache. This is useful for development.
 
 #### Deployment
 
   A Procfile is included if you want to spin up an instance up on heroku. Use RedisToGo for caching.
 
-
-This code is [CC0][CC0] and dedicated to the memory of [Aaron Swartz][Aaron Swartz].
-
-[collections]: http://www.metmuseum.org/collections
-[issues]: https://github.com/jedahan/collections-api/issues
-[localhost]: http://localhost
 [CC0]: http://creativecommons.org/publicdomain/zero/1.0
+[collections]: http://www.metmuseum.org/collections
+[collections-api.herokuapp.com]: http://collections-api.herokuapp.com
+[the issue page]: https://github.com/jedahan/collections-api/issues
 [Aaron Swartz]: http://en.wikipedia.org/wiki/Aaron_Swartz
-[testing]: http://collections-api.herokuapp.com
+
+[node.js]: http://nodejs.org
+[redis]: http://redis.io
+[dtrace]: http://mcavage.github.com/node-restify/#DTrace
+
+[localhost]: http://localhost
+[swagger]: http://swagger.wordnik.com
+[restify]: http://mcavage.github.com/node-restify
