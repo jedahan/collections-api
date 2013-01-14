@@ -27,6 +27,12 @@ Questions, bug reports and feature requests are appreciated, please submit them 
 
   * Set `COLLECTIONS_API_NO_CACHE` to stop trying to connect to the redis cache
 
+#### Deployment
+
+  *Heroku*
+
+  A Procfile is included if you want to spin an instance up on heroku. It has support for RedisToGo for caching. There is a testing server on [http://collections-api.herokuapp.com][testing]
+
 
 This code is [CC0][CC0] and dedicated to the memory of [Aaron Swartz][Aaron Swartz].
 
@@ -35,3 +41,4 @@ This code is [CC0][CC0] and dedicated to the memory of [Aaron Swartz][Aaron Swar
 [localhost]: http://localhost
 [CC0]: http://creativecommons.org/publicdomain/zero/1.0
 [Aaron Swartz]: http://en.wikipedia.org/wiki/Aaron_Swartz
+[testing]: http://collections-api.herokuapp.com

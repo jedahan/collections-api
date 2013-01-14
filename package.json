@@ -22,7 +22,7 @@
   }
 , "scripts":
   { "start": "coffee server"
-  , "test": "COLLECTIONS_API_NOCACHE= coffee test/*test.coffee"
+  , "test": "coffee test/*test.coffee"
   }
 , "repository" :
   { "type" : "git"
