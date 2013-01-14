@@ -3,10 +3,9 @@ request = require 'request'
 cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
 redis = require 'redis'
-url = require 'url'
 async = require 'async'
 
-NO_CACHE = process.env.COLLECTIONS_API_NOCACHE?
+cache = NO_CACHE = process.env.COLLECTIONS_API_NOCACHE?
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
@@ -24,8 +23,9 @@ _root_redirect = (req, res, next) ->
   next()
 
 _check_cache = (options) ->
-  redis_url = url.parse(process.env.REDISTOGO_URL or 'http://127.0.0.1:6379')
-  cache = redis.createClient redis_url.port, redis_url.hostname
+  redis_url   = require("url").parse(process.env.REDISTOGO_URL or 'http://0.0.0.0:6379')
+  cache = require("redis").createClient redis_url.port, redis_url.hostname
+  cache.auth redis_url.auth.split(":")[1] if redis_url.auth?
 
   cache.on 'error', (err) ->
     console.error err
