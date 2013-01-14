@@ -1,5 +1,7 @@
 Here is an api built off the metropolitan museum's [collections][collections] website
 
+A testing version is available on [http://collections-api.herokuapp.com][testing]
+
 Questions, bug reports and feature requests are appreciated, please submit them to [github issues][issues]
 
 #### Setup
@@ -25,13 +27,11 @@ Questions, bug reports and feature requests are appreciated, please submit them 
 
 #### Options
 
-  * Set `COLLECTIONS_API_NO_CACHE` to stop trying to connect to the redis cache
+  * Set `COLLECTIONS_API_NO_CACHE` to ignore caching
 
 #### Deployment
 
-  *Heroku*
-
-  A Procfile is included if you want to spin an instance up on heroku. It has support for RedisToGo for caching. There is a testing server on [http://collections-api.herokuapp.com][testing]
+  A Procfile is included if you want to spin up an instance up on heroku. Use RedisToGo for caching.
 
 
 This code is [CC0][CC0] and dedicated to the memory of [Aaron Swartz][Aaron Swartz].
