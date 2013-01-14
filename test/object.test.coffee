@@ -3,7 +3,7 @@ expect = require('chai').expect
 
 APIeasy.describe('collections api')
   .discuss('When using the collections api to query an object')
-  .use('localhost', 8080)
+  .use('localhost')
   .setHeader('Content-Type', 'application/json')
   .discuss('that is clean as a whistle')
   .get('/object/190022757')
