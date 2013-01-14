@@ -134,7 +134,7 @@ server.use restify.fullResponse() # set CORS, eTag, other common headers
 unless NO_CACHE
   server.use _check_cache()
 
-swagger.configure server, basePath: "http://localhost"
+swagger.configure server
 
 ###
   Object API
