@@ -18,6 +18,10 @@ Dedicated to the memory of [Aaron Swartz][].
 
   The [restify][restify] framework has first-class support for [DTrace][dtrace], so enjoy the performance analysation tools.
 
+#### Guidelines
+
+  The code is [CC0][], but if you do anything interesting with the data, it would be nice to give attribution to The Metropolitan Museum of Art, and contribute back any modifications or improvements.
+
 #### Options
 
   * Set `COLLECTIONS_API_NO_CACHE` to ignore the redis cache. This is useful for development.
