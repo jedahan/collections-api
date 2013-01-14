@@ -5,6 +5,7 @@
 , "dependencies":
   { "async":"0.1.x"
   , "cheerio": "0.10.x"
+  , "coffee-script": "1.4.x"
   , "redis": "0.8.x"
   , "request": "2.11.x"
   , "restify": "2.0.x"
