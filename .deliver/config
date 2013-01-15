@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+APP="collections-api"
+HOSTS="linode"
+PORT="8080"
+STRATEGY="nodejs"
