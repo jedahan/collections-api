@@ -4,6 +4,7 @@ cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
 redis = require 'redis'
 async = require 'async'
+toobusy = require 'toobusy'
 
 cache = NO_CACHE = process.env.COLLECTIONS_API_NOCACHE?
 
@@ -21,6 +22,10 @@ _get_id = (el) -> +(el.attr('href')?.match(/\d+/)?[0])
 _root_redirect = (req, res, next) ->
   req.url = '/index.html' if req.url is '/'
   next()
+
+_check_if_busy = (req, res, next) ->
+  if toobusy() res.send 503, "I'm busy right now, sorry."
+  else next()
 
 _check_cache = (options) ->
   redis_url   = require("url").parse(process.env.REDISTOGO_URL or 'http://0.0.0.0:6379')
@@ -127,6 +132,7 @@ _parseIds = (path, body, cb) ->
 server = restify.createServer()
 server.pre _root_redirect
 server.pre restify.pre.userAgentConnection()
+server.use _check_if_busy
 server.use restify.acceptParser server.acceptable # respond correctly to accept headers
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers

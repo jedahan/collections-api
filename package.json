@@ -10,6 +10,7 @@
   , "request": "2.11.x"
   , "restify": "2.0.x"
   , "swagger-doc": "0.1.x"
+  , "toobusy": "0.1.x"
   }
 , "devDependencies":
   { "api-easy": "0.3.x"
