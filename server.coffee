@@ -24,7 +24,8 @@ _root_redirect = (req, res, next) ->
   next()
 
 _check_if_busy = (req, res, next) ->
-  if toobusy() res.send 503, "I'm busy right now, sorry."
+  if toobusy()
+    res.send 503, "I'm busy right now, sorry."
   else next()
 
 _check_cache = (options) ->
