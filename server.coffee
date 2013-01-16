@@ -6,7 +6,7 @@ redis = require 'redis'
 async = require 'async'
 toobusy = require 'toobusy'
 
-cache = NO_CACHE = process.env.COLLECTIONS_API_NOCACHE?
+cache = CACHE = not process.env.COLLECTIONS_API_NO_CACHE?
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
@@ -63,8 +63,7 @@ _scrape = (url, parser, req, res, next) ->
           next new restify.ForbiddenError err.message
           # should this be `throw err` or should it throw 1 deeper?
         else
-          unless NO_CACHE
-            cache.set req.getPath(), JSON.stringify(result), redis.print
+          cache.set req.getPath(), JSON.stringify(result), redis.print if CACHE
           res.send result
 
 getIds = (req, res, next) ->
@@ -136,9 +135,7 @@ server.use _check_if_busy
 server.use restify.acceptParser server.acceptable # respond correctly to accept headers
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers
-
-unless NO_CACHE
-  server.use _check_cache()
+server.use _check_cache() if CACHE
 
 swagger.configure server
 
