@@ -57,6 +57,8 @@
                         console.log(swaggerUi);
                     }
                   $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+                  $('#resource_ids input[name=id]').attr('value',2);
+                  $('#resource_object input[name=id]').attr('value',90066847);
                 },
                 onFailure: function(data) {
                 	if(console) {
