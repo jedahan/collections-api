@@ -20,7 +20,7 @@ Dedicated to the memory of [Aaron Swartz][].
 
 #### Guidelines
 
-  The code is [CC0][], but if you do anything interesting with the data, it would be nice to give attribution to The Metropolitan Museum of Art, and contribute back any modifications or improvements.
+  The code is [CC0][], but if you do anything interesting with the data, it would be nice to give attribution to The Metropolitan Museum of Art. If you do anything interesting with the code, it would be nice to give attribution and contribute back any modifications or improvements.
 
 #### Options
 
