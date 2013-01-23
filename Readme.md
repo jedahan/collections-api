@@ -1,6 +1,6 @@
 Here is a [CC0][] api built by scraping the metropolitan museum's [collections][] website.
 
-Live instances of the api are available on [collections-api.herokuapp.com][] and [li363-137.members.linode.com][]
+Live instances of the api are available on [scrAPI.org][]
 
 Please submit all questions, bugs and feature requests to [the issue page][].
 
@@ -34,8 +34,7 @@ Dedicated to the memory of [Aaron Swartz][].
 
 [CC0]: http://creativecommons.org/publicdomain/zero/1.0
 [collections]: http://www.metmuseum.org/collections
-[collections-api.herokuapp.com]: http://collections-api.herokuapp.com
-[li363-137.members.linode.com]: http://li363-137.members.linode.com
+[scrAPI.org]: http://scrAPI.org
 [the issue page]: https://github.com/jedahan/collections-api/issues
 [Aaron Swartz]: http://en.wikipedia.org/wiki/Aaron_Swartz
 
