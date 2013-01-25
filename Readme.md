@@ -1,6 +1,6 @@
 Here is a [CC0][] api built by scraping the metropolitan museum's [collections][] website.
 
-Live instances of the api are available on [scrAPI.org][]
+A live instance is available on [scrAPI.org][]
 
 Please submit all questions, bugs and feature requests to [the issue page][].
 
@@ -14,9 +14,9 @@ Dedicated to the memory of [Aaron Swartz][].
 
 #### Usage
 
-  Visit [localhost][localhost] to browse the api, pretty UI courtesy of [swagger][swagger].
+  Visit [localhost][] to browse the api, pretty UI courtesy of [swagger][].
 
-  The [restify][restify] framework has first-class support for [DTrace][dtrace], so enjoy the performance analysation tools.
+  The [restify][] framework has first-class support for [DTrace][], so enjoy the performance analysation tools.
 
 #### Guidelines
 
@@ -40,7 +40,7 @@ Dedicated to the memory of [Aaron Swartz][].
 
 [node.js]: http://nodejs.org
 [redis]: http://redis.io
-[dtrace]: http://mcavage.github.com/node-restify/#DTrace
+[DTrace]: http://mcavage.github.com/node-restify/#DTrace
 
 [localhost]: http://localhost
 [swagger]: http://swagger.wordnik.com
