@@ -1,0 +1,7 @@
+Bluepill.application("collections-api") do |app|
+  app.process("npm") do |process|
+    process.start_command = "npm start"
+    process.pid_file = "/tmp/collections-api.pid"
+    daemonize = true
+  end
+end
