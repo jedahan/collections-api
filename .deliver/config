@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 APP="collections-api"
-HOSTS="linode"
-PORT="8080"
+SUPERVISOR="bluepill"
+HOSTS="joyent"
+PORT="80"
 STRATEGY="nodejs"
