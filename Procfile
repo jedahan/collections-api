@@ -1,1 +1,1 @@
-web: coffee server
+web: sudo coffee server

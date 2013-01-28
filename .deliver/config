@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 APP="collections-api"
-SUPERVISOR="bluepill"
 HOSTS="joyent"
 PORT="80"
 STRATEGY="nodejs"
+SUPERVISOR="bluepill"
