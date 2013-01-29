@@ -5,6 +5,7 @@ swagger = require 'swagger-doc'
 redis = require 'redis'
 async = require 'async'
 toobusy = require 'toobusy'
+agent = require 'webkit-devtools-agent'
 
 cache = CACHE = not process.env.COLLECTIONS_API_NO_CACHE?
 
@@ -173,4 +174,4 @@ server.get /\/*/, restify.serveStatic directory: './static'
 
 
 server.listen process.env.PORT or 80, ->
-  console.log "#{server.name} listening at #{server.url}"
+  console.log "[%s] #{server.name} listening at #{server.url}", process.pid
