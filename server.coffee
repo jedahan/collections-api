@@ -90,6 +90,7 @@ getRandomObject = (req, res, next) ->
 _parseObject = (path, body, cb) ->
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
+  throw new Error "empty path" unless path?
 
   $ = cheerio.load body
   object = {}
