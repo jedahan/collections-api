@@ -74,6 +74,18 @@ getIds = (req, res, next) ->
 getObject = (req, res, next) ->
   _scrape "#{scrape_url}/", _parseObject, req, res, next
 
+getRandomObject = (req, res, next) ->
+  request "#{server.url}/ids/1", (err, response, body) ->
+    links = JSON.parse(body).links
+    max = link.href for link in links when link.rel is 'last'
+    random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
+
+    request "#{server.url}/ids/#{random_page}", (err, response, body) ->
+      ids = JSON.parse(body).ids
+      random_id = ids[Math.floor(Math.random() * ids.length) + 1]
+      request "#{server.url}/object/#{random_id}", (err, response, body) ->
+        console.log response
+        res.send JSON.parse(body)
 
 _parseObject = (path, body, cb) ->
   throw new Error "body empty" unless body?
@@ -149,10 +161,15 @@ swagger.configure server
 ###
   Object API
 ###
+server.get  "/random", getRandomObject
+server.head "/random", getRandomObject
 
 server.get  "/object/:id", getObject
 server.head "/object/:id", getObject
+
 docs = swagger.createResource '/object'
+docs.get "/random", "Gets information about a random object in the collection",
+  nickname: "getRandom"
 docs.get "/object/{id}", "Gets information about a specific object in the collection",
   nickname: "getObject"
   parameters: [
