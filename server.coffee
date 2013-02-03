@@ -51,7 +51,7 @@ _check_cache = (options) ->
 _scrape = (url, parser, req, res, next) ->
   id = +req.params.id
   next new restify.UnprocessableEntityError "id missing" unless id?
-  next new restify.UnprocessableEntityError "#{id} is not a number" if isNaN id
+  next new restify.UnprocessableEntityError "#{req.params.id} is not a number" if isNaN id
 
   console.log "Scraping #{id}"
   request url+id, (err, response, body) ->
