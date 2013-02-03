@@ -174,7 +174,10 @@ docs.get "/random", "Gets information about a random object in the collection",
 docs.get "/object/{id}", "Gets information about a specific object in the collection",
   nickname: "getObject"
   parameters: [
-    {name: 'id', description: 'Object id as seen on collections url', required: true, dataType: 'int', paramType: 'path'}
+    { name: 'id', description: 'Object id as seen on collections url', required: true, dataType: 'int', paramType: 'path' }
+  ]
+  errorResponses: [
+    { code: 404, reason: "Object not found" }
   ]
 
 ###
