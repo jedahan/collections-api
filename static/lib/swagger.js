@@ -97,7 +97,15 @@
         }
         return _this;
       }).error(function(error) {
-        return _this.fail(error.status + ' : ' + error.statusText + ' ' + _this.discoveryUrl);
+        if (_this.discoveryUrl.substring(0, 4) !== 'http') {
+          return _this.fail('Please specify the protocol for ' + _this.discoveryUrl);
+        } else if (error.status === 0) {
+          return _this.fail('Can\'t read from server.  It may not have the appropriate access-control-origin settings.');
+        } else if (error.status === 404) {
+          return _this.fail('Can\'t read swagger JSON from ' + _this.discoveryUrl);
+        } else {
+          return _this.fail(error.status + ' : ' + error.statusText + ' ' + _this.discoveryUrl);
+        }
       });
     };
 
@@ -226,7 +234,7 @@
           _this.ready = true;
           return _this.api.selfReflect();
         }).error(function(error) {
-          return _this.api.fail(error.status + ' : ' + error.statusText + ' ' + _this.url);
+          return _this.api.fail("Unable to read api '" + _this.name + "' from path " + _this.url + " (server returned " + error.statusText + ")");
         });
       }
     }
@@ -252,12 +260,16 @@
     };
 
     SwaggerResource.prototype.addOperations = function(resource_path, ops) {
-      var o, op, _i, _len, _results;
+      var consumes, o, op, _i, _len, _results;
       if (ops) {
         _results = [];
         for (_i = 0, _len = ops.length; _i < _len; _i++) {
           o = ops[_i];
-          op = new SwaggerOperation(o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this, o.supportedContentTypes);
+          consumes = o.consumes;
+          if (o.supportedContentTypes) {
+            consumes = o.supportedContentTypes;
+          }
+          op = new SwaggerOperation(o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this, o.consumes, o.produces);
           this.operations[op.nickname] = op;
           _results.push(this.operationsArray.push(op));
         }
@@ -415,7 +427,7 @@
 
   SwaggerOperation = (function() {
 
-    function SwaggerOperation(nickname, path, httpMethod, parameters, summary, notes, responseClass, errorResponses, resource, supportedContentTypes) {
+    function SwaggerOperation(nickname, path, httpMethod, parameters, summary, notes, responseClass, errorResponses, resource, consumes, produces) {
       var parameter, v, _i, _j, _len, _len1, _ref, _ref1, _ref2,
         _this = this;
       this.nickname = nickname;
@@ -427,7 +439,8 @@
       this.responseClass = responseClass;
       this.errorResponses = errorResponses;
       this.resource = resource;
-      this.supportedContentTypes = supportedContentTypes;
+      this.consumes = consumes;
+      this.produces = produces;
       this["do"] = __bind(this["do"], this);
 
       if (this.nickname == null) {
