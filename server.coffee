@@ -84,8 +84,7 @@ getRandomObject = (req, res, next) ->
       ids = JSON.parse(body).ids
       random_id = ids[Math.floor(Math.random() * ids.length) + 1]
       request "#{server.url}/object/#{random_id}", (err, response, body) ->
-        console.log response
-        res.send JSON.parse(body)
+        res.send JSON.parse body
 
 _parseObject = (path, body, cb) ->
   throw new Error "body empty" unless body?
