@@ -5,7 +5,6 @@ swagger = require 'swagger-doc'
 redis = require 'redis'
 async = require 'async'
 toobusy = require 'toobusy'
-agent = require 'webkit-devtools-agent'
 
 cache = CACHE = not process.env.COLLECTIONS_API_NO_CACHE?
 

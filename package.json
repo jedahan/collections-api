@@ -11,7 +11,6 @@
   , "restify": "2.0.x"
   , "swagger-doc": "0.1.x"
   , "toobusy": "0.1.x"
-  , "webkit-devtools-agent": "0.0.x"
   }
 , "devDependencies":
   { "api-easy": "0.3.x"
