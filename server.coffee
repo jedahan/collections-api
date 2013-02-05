@@ -75,8 +75,7 @@ getObject = (req, res, next) ->
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids/1", (err, response, body) ->
-    links = JSON.parse(body).links
-    max = link.href for link in links when link.rel is 'last'
+    max = JSON.parse(body)._links.last.href
     random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
 
     request "#{server.url}/ids/#{random_page}", (err, response, body) ->
@@ -112,7 +111,7 @@ _parseObject = (path, body, cb) ->
       when 'Provenance' then object[category] = _remove_empty _trim content.split ';'
 
   delete object[key] for key,value of object when value is null
-  object['links'] = [{'rel':'self', 'href':path}]
+  object['_links'] = self: href: path
 
   cb null, object
 
@@ -126,20 +125,20 @@ _parseIds = (path, body, cb) ->
 
   ids['ids'] = ((_get_id $(a)) for a in $('.object-image')) or null
 
-  self = {'rel':'self', 'href':path}
+  self = self: href: path
 
-  first = {'rel':'first', 'href': path.replace /\d+/, 1}
+  first = first: href: path.replace /\d+/, 1
 
   if $('.pagination .next a').attr('href')?
-    next = {'rel':'next', 'href': path.replace /\d+/, page+1 }
+    next = next: href: path.replace /\d+/, page+1
   if $('.pagination .prev a').attr('href')?
-    prev = {'rel':'prev', 'href': path.replace /\d+/, page-1 }
+    prev = prev: href: path.replace /\d+/, page-1
 
   if id = $('.pagination a').last().attr('href').match(/\d+$/)
-    last = {'rel':'last', 'href': path.replace /\d+/, id}
+    last = last: href: path.replace /\d+/, id
 
-  async.filter [self, first, prev, next, last], _exists , (results) ->
-    ids['links'] = results
+  async.filter [self, first, prev, next, last], _exists,  (results) ->
+    ids['_links'] = results
 
     cb null, ids
 
