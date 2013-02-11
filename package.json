@@ -3,7 +3,7 @@
 , "description": "frontend api services"
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
-  { "async":"0.1.x"
+  { "async":"0.2.x"
   , "cheerio": "0.10.x"
   , "coffee-script": "1.4.x"
   , "redis": "0.8.x"
