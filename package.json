@@ -7,8 +7,8 @@
   , "cheerio": "0.10.x"
   , "coffee-script": "1.4.x"
   , "redis": "0.8.x"
-  , "request": "2.11.x"
-  , "restify": "2.0.x"
+  , "request": "2.12.y"
+  , "restify": "2.2.x"
   , "swagger-doc": "0.1.x"
   , "toobusy": "0.1.x"
   }

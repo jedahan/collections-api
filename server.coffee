@@ -19,10 +19,6 @@ _trim = (arr) -> str.trim() for str in arr
 _exists = (item, cb) -> cb item?
 _get_id = (el) -> +(el.attr('href')?.match(/\d+/)?[0])
 
-_root_redirect = (req, res, next) ->
-  req.url = '/index.html' if req.url is '/'
-  next()
-
 _check_if_busy = (req, res, next) ->
   if toobusy()
     res.send 503, "I'm busy right now, sorry."
@@ -146,7 +142,6 @@ _parseIds = (path, body, cb) ->
   Server Options
 ###
 server = restify.createServer()
-server.pre _root_redirect
 server.pre restify.pre.userAgentConnection()
 server.use _check_if_busy
 server.use restify.acceptParser server.acceptable # respond correctly to accept headers
@@ -193,7 +188,7 @@ docs.get "/ids/{id}", "Gets a list of ids (60 per request) found in the collecti
 ###
   Documentation
 ###
-server.get /\/*/, restify.serveStatic directory: './static'
+server.get /\/*/, restify.serveStatic directory: './static', default: 'index.html'
 
 
 server.listen process.env.PORT or 80, ->
