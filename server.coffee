@@ -44,18 +44,14 @@ _check_cache = (options) ->
       next()
 
 _scrape = (url, parser, req, res, next) ->
-  id = +req.params.id
-  next new restify.UnprocessableEntityError "id missing" unless id?
-  next new restify.UnprocessableEntityError "#{req.params.id} is not a number" if isNaN id
-
-  console.log "Scraping #{id}"
-  request url+id, (err, response, body) ->
+  console.log "Scraping #{url}"
+  request url, (err, response, body) ->
     console.error err if err?
-    # if there is a redirect, we can't find that id
+    # if there is a redirect, we can't find that url
     if response.request.redirects.length
-      next new restify.ResourceNotFoundError "#{id} not found"
+      next new restify.ResourceNotFoundError "#{url} not found"
     else
-      parser req.getPath(), body, (err, result) ->
+      parser req.getHref(), body, (err, result) ->
         if err?
           next new restify.ForbiddenError err.message
           # should this be `throw err` or should it throw 1 deeper?
@@ -63,11 +59,14 @@ _scrape = (url, parser, req, res, next) ->
           cache.set req.getPath(), JSON.stringify(result), redis.print if CACHE
           res.send result
 
+queryIds = (req, res, next) ->
+  _scrape "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}", _parseIds, req, res, next
+
 getIds = (req, res, next) ->
-  _scrape "#{scrape_url}?rpp=60&pg=", _parseIds, req, res, next
+  _scrape "#{scrape_url}?rpp=60&pg=#{req.params.id}", _parseIds, req, res, next
 
 getObject = (req, res, next) ->
-  _scrape "#{scrape_url}/", _parseObject, req, res, next
+  _scrape "#{scrape_url}/#{req.params.id}", _parseObject, req, res, next
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids/1", (err, response, body) ->
@@ -112,7 +111,8 @@ _parseObject = (path, body, cb) ->
   cb null, object
 
 _parseIds = (path, body, cb) ->
-  page = + /\d+/.exec(path)[0]
+  page = +(/page=(\d+)/.exec(path)?[1] or 1)
+
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
 
@@ -123,15 +123,15 @@ _parseIds = (path, body, cb) ->
 
   self = self: href: path
 
-  first = first: href: path.replace /\d+/, 1
+  first = first: href: path.replace(/page=(\d+)/, "page=#{1}")
 
   if $('.pagination .next a').attr('href')?
-    next = next: href: path.replace /\d+/, page+1
+    next = next: href: path.replace(/page=(\d+)/, "page=#{page+1}")
   if $('.pagination .prev a').attr('href')?
-    prev = prev: href: path.replace /\d+/, page-1
+    prev = prev: href: path.replace(/page=(\d+)/, "page=#{page-1}")
 
   if id = $('.pagination a').last().attr('href').match(/\d+$/)
-    last = last: href: path.replace /\d+/, id
+    last = last: href: path.replace(/page=(\d+)/, "page=#{id}")
 
   async.filter [self, first, prev, next, last], _exists,  (results) ->
     ids['_links'] = results
@@ -157,6 +157,8 @@ swagger.configure server
 server.get  "/random", getRandomObject
 server.head "/random", getRandomObject
 
+server.get "/search", queryIds
+
 server.get  "/object/:id", getObject
 server.head "/object/:id", getObject
 
@@ -170,6 +172,17 @@ docs.get "/object/{id}", "Gets information about a specific object in the collec
   ]
   errorResponses: [
     { code: 404, reason: "Object not found" }
+  ]
+
+###
+  Search API
+###
+docs = swagger.createResource '/query'
+docs.get "/search", "Gets a list of ids based on a search query",
+  nickname: "getQuery"
+  parameters: [
+    { name: 'query', description: 'search terms', required: true, dataType: 'string', paramType: 'query' }
+    { name: 'page', description: 'page to return of results', required: false, dataType: 'int', paramType: 'query' }
   ]
 
 ###
