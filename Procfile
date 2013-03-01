@@ -1,4 +1,3 @@
-server: coffee --compile --watch server.coffee
 coffee: coffee --compile --watch test/*coffee
-supervisor: sudo supervisor --quiet server.js
+supervisor: sudo coffee server
 redis: redis-server
