@@ -16,7 +16,6 @@
   { "api-easy": "0.3.x"
   , "chai": "1.5.x"
   , "coffee-script": "1.4.x"
-  , "corsproxy": "0.2.x"
   , "supervisor": "0.5.x"
   }
 , "engines": {
