@@ -94,7 +94,7 @@ _parseObject = (path, body, cb) ->
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
   object['id'] = + /\d+/.exec(path)[0]
   object['gallery-id'] = _get_id($('.gallery-id a')) or null
-  object['image'] = $('a[name="art-object-fullscreen"] > img').attr('src')?.match(/(^http.*)/)?[0]
+  object['image'] = $('a[name="art-object-fullscreen"] > img').attr('src')?.match(/(^http.*)/)?[0]?.replace('web-large','original')
   object['related-artworks'] = ((_get_id $(a)) for a in $('.related-content-container .object-info a')) or null
 
   # add description and provenance
