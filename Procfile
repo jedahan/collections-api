@@ -1,2 +1,2 @@
-web: sudo coffee server
+web: coffee server
 redis: redis-server

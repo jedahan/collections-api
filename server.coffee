@@ -191,5 +191,5 @@ docs.get "/ids/{id}", "Gets a list of ids (60 per request) found in the collecti
 server.get /\/*/, restify.serveStatic directory: './static', default: 'index.html'
 
 
-server.listen process.env.PORT or 80, ->
+server.listen process.env.PORT or 8080, ->
   console.log "[%s] #{server.name} listening at #{server.url}", process.pid
