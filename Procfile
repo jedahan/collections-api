@@ -1,3 +1,3 @@
-coffee: coffee --compile --watch test/*coffee
+coffee: coffee --compile --watch test/
 supervisor: sudo coffee server
 redis: redis-server
