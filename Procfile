@@ -1,4 +1,5 @@
-coffee: $NPM_PATH/coffee --compile --watch server.coffee
-server: $NPM_PATH/supervisor --quiet server.js
-proxy: $NPM_PATH/corsproxy 0.0.0.0 80
+coffee: coffee --compile --watch server.coffee
+coffee: coffee --compile --watch test/*coffee
+server: supervisor --quiet server.js
+proxy: corsproxy 0.0.0.0 80
 redis: redis-server
