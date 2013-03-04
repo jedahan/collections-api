@@ -134,7 +134,10 @@ _parseIds = (path, body, cb) ->
     last = last: href: path.replace(/page=(\d+)/, "page=#{id}")
 
   async.filter [self, first, prev, next, last], _exists,  (results) ->
-    ids['_links'] = results
+    ids['_links'] = {}
+    for link in results
+      for rel, val of link
+        ids['_links'][rel] = val
 
     cb null, ids
 
