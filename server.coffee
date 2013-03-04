@@ -44,14 +44,13 @@ _check_cache = (options) ->
       next()
 
 _scrape = (url, parser, req, res, next) ->
-  console.log "Scraping #{url}"
   request url, (err, response, body) ->
     console.error err if err?
     # if there is a redirect, we can't find that url
     if response.request.redirects.length
       next new restify.ResourceNotFoundError "#{url} not found"
     else
-      parser req.getHref(), body, (err, result) ->
+      parser 'http'+'://'+req.headers.host+req.getHref(), body, (err, result) ->
         if err?
           next new restify.ForbiddenError err.message
           # should this be `throw err` or should it throw 1 deeper?
