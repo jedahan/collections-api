@@ -6,7 +6,7 @@ redis = require 'redis'
 async = require 'async'
 toobusy = require 'toobusy'
 
-cache = CACHE = false
+cache = CACHE = not process.env.COLLECTIONS_API_NO_CACHE?
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
