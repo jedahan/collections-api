@@ -6,7 +6,7 @@ redis = require 'redis'
 async = require 'async'
 toobusy = require 'toobusy'
 
-cache = CACHE = process.env.ENVIRONMENT is 'production'
+cache = CACHE = process.env.NODE_ENV is 'production'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
