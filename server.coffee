@@ -25,7 +25,7 @@ _check_if_busy = (req, res, next) ->
   else next()
 
 _check_cache = (options) ->
-  redis_url = require("url").parse(process.env.REDISTOGO_URL or 'http://0.0.0.0:6379')
+  redis_url = require("url").parse(process.env.REDIS_URL or 'http://127.0.0.1:6379')
   cache = require("redis").createClient redis_url.port, redis_url.hostname
   cache.auth redis_url.auth.split(":")[1] if redis_url.auth?
 
