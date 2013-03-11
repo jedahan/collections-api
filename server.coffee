@@ -46,14 +46,13 @@ _check_cache = (options) ->
 _scrape = (url, parser, req, res, next) ->
   request url, (err, response, body) ->
     console.error err if err?
-    # if there is a redirect, we can't find that url
+    # The museum website redirects the user instead of doing a 404
     if response.request.redirects.length
       next new restify.ResourceNotFoundError "#{url} not found"
     else
       parser 'http'+'://'+req.headers.host+req.getHref(), body, (err, result) ->
         if err?
           next new restify.ForbiddenError err.message
-          # should this be `throw err` or should it throw 1 deeper?
         else
           cache.set req.getPath(), JSON.stringify(result), redis.print if CACHE
           res.send result
