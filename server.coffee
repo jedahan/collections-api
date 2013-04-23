@@ -5,19 +5,11 @@ swagger = require 'swagger-doc'
 redis = require 'redis'
 async = require 'async'
 toobusy = require 'toobusy'
+_ = require './lib/util'
 
 cache = CACHE = process.env.NODE_ENV is 'production'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
-
-_arrify  = (str) -> str.split /\r\n/
-_remove_count = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
-_remove_empty = (arr) -> arr.filter (e) -> e.length
-_flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
-_process = (str) -> _flatten _remove_empty _remove_count _arrify str
-_trim = (arr) -> str.trim() for str in arr
-_exists = (item, cb) -> cb item?
-_get_id = (el) -> +(el.attr('href')?.match(/\d+/)?[0])
 
 _check_if_busy = (req, res, next) ->
   if toobusy()
@@ -86,22 +78,22 @@ _parseObject = (path, body, cb) ->
   object = {}
 
   # Add all definition lists as properties
-  object[_process $($('dt')[i]).text()] = _process $(v).text() for v,i in $('dd')
+  object[_.process $($('dt')[i]).text()] = _.process $(v).text() for v,i in $('dd')
 
   # make sure Where always returns an array
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
   object['id'] = + /\d+/.exec(path)[0]
-  object['gallery-id'] = _get_id($('.gallery-id a')) or null
+  object['gallery-id'] = _.get_id($('.gallery-id a')) or null
   object['image'] = $('a[name="art-object-fullscreen"] > img').attr('src')?.match(/(^http.*)/)?[0]?.replace('web-large','original')
-  object['related-artworks'] = ((_get_id $(a)) for a in $('.related-content-container .object-info a')) or null
+  object['related-artworks'] = ((_.get_id $(a)) for a in $('.related-content-container .object-info a')) or null
 
   # add description and provenance
   $('.promo-accordion > li').each (i, e) ->
-    category = _process $(e).find('.category').text()
+    category = _.process $(e).find('.category').text()
     content = $(e).find('.accordion-inner > p').text().trim()
     switch category
       when 'Description' then object[category] = content
-      when 'Provenance' then object[category] = _remove_empty _trim content.split ';'
+      when 'Provenance' then object[category] = _.remove_empty _.trim content.split ';'
 
   delete object[key] for key,value of object when value is null
   object['_links'] = self: href: path
@@ -117,7 +109,7 @@ _parseIds = (path, body, cb) ->
   $ = cheerio.load body
   ids = {}
 
-  ids['ids'] = ((_get_id $(a)) for a in $('.object-image')) or null
+  ids['ids'] = ((_.get_id $(a)) for a in $('.object-image')) or null
 
   self = self: href: path
 
@@ -131,7 +123,7 @@ _parseIds = (path, body, cb) ->
   if id = $('.pagination a').last().attr('href').match(/\d+$/)
     last = last: href: path.replace(/page=(\d+)/, "page=#{id}")
 
-  async.filter [self, first, prev, next, last], _exists,  (results) ->
+  async.filter [self, first, prev, next, last], _.exists,  (results) ->
     ids['_links'] = {}
     for link in results
       for rel, val of link
