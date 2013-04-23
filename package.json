@@ -1,15 +1,15 @@
 { "name": "collections-api"
-, "version": "0.0.5"
+, "version": "0.0.6"
 , "description": "frontend api services"
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
   { "async":"0.2.x"
-  , "cheerio": "0.10.x"
+  , "cheerio": "0.11.x"
   , "coffee-script": "1.6.x"
   , "redis": "0.8.x"
-  , "request": "2.14.x"
-  , "restify": "2.3.x"
-  , "swagger-doc": "0.1.x"
+  , "request": "2.20.x"
+  , "restify": "2.4.x"
+  , "swagger-doc": "0.2.x"
   , "toobusy": "0.2.x"
   }
 , "devDependencies":
@@ -19,7 +19,7 @@
   , "supervisor": "0.5.x"
   }
 , "engines": {
-    "node": "0.8.x",
+    "node": "0.10.x",
     "npm":  "1.2.x"
   }
 , "scripts":
