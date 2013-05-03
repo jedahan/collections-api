@@ -17,7 +17,7 @@
   }
 , "devDependencies":
   { "api-easy": "0.3.x"
-  , "chai": "1.5.x"
+  , "chai": "1.6.x"
   , "coffee-script": "1.6.x"
   , "supervisor": "0.5.x"
   }
