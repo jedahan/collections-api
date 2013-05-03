@@ -1,4 +1,7 @@
 { "name": "collections-api"
+, "homepage": "http://scrAPI.org"
+, "bugs": "http://github.com/jedahan/collections-api/issues"
+, "licenses": [ "ISC" ]
 , "version": "0.0.6"
 , "description": "frontend api services"
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
