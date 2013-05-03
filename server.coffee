@@ -7,7 +7,7 @@ async = require 'async'
 toobusy = require 'toobusy'
 _ = require './lib/util'
 
-cache = CACHE = process.env.NODE_ENV is 'production'
+cache = PRODUCTION = process.env.NODE_ENV is 'production'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
@@ -46,7 +46,7 @@ _scrape = (url, parser, req, res, next) ->
         if err?
           next new restify.ForbiddenError err.message
         else
-          cache.set req.getPath(), JSON.stringify(result), redis.print if CACHE
+          cache.set req.getPath(), JSON.stringify(result), redis.print if PRODUCTION
           res.send result
 
 queryIds = (req, res, next) ->
@@ -140,7 +140,7 @@ server.use _check_if_busy
 server.use restify.acceptParser server.acceptable # respond correctly to accept headers
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers
-server.use(_check_cache()) if CACHE
+server.use(_check_cache()) if PRODUCTION
 
 swagger.configure server
 
