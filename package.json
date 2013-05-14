@@ -2,7 +2,7 @@
 , "homepage": "http://scrAPI.org"
 , "bugs": "http://github.com/jedahan/collections-api/issues"
 , "licenses": [ "ISC" ]
-, "version": "0.0.6"
+, "version": "0.0.7"
 , "description": "frontend api services"
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "dependencies":
@@ -11,7 +11,7 @@
   , "coffee-script": "1.6.x"
   , "redis": "0.8.x"
   , "request": "2.21.x"
-  , "restify": "2.4.x"
+  , "restify": "2.5.x"
   , "swagger-doc": "0.2.x"
   , "toobusy": "0.2.x"
   }
