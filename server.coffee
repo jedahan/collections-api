@@ -140,6 +140,7 @@ server.use _check_if_busy
 server.use restify.acceptParser server.acceptable # respond correctly to accept headers
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers
+server.use restify.gzipResponse()
 server.use(_check_cache()) if PRODUCTION
 
 swagger.configure server
