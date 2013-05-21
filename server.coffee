@@ -156,9 +156,20 @@ server.get "/search", queryIds
 server.get  "/object/:id", getObject
 server.head "/object/:id", getObject
 
-docs = swagger.createResource '/object'
+server.get  "/ids/:id", getIds
+server.head "/ids/:id", getIds
+
+docs = swagger.createResource '/docs'
 docs.get "/random", "Gets information about a random object in the collection",
   nickname: "getRandom"
+
+docs.get "/search", "Gets a list of ids based on a search query",
+  nickname: "getQuery"
+  parameters: [
+    { name: 'query', description: 'search terms', required: true, dataType: 'string', paramType: 'query' }
+    { name: 'page', description: 'page to return of results', required: false, dataType: 'int', paramType: 'query' }
+  ]
+
 docs.get "/object/{id}", "Gets information about a specific object in the collection",
   nickname: "getObject"
   parameters: [
@@ -168,25 +179,7 @@ docs.get "/object/{id}", "Gets information about a specific object in the collec
     { code: 404, reason: "Object not found" }
   ]
 
-###
-  Search API
-###
-docs = swagger.createResource '/query'
-docs.get "/search", "Gets a list of ids based on a search query",
-  nickname: "getQuery"
-  parameters: [
-    { name: 'query', description: 'search terms', required: true, dataType: 'string', paramType: 'query' }
-    { name: 'page', description: 'page to return of results', required: false, dataType: 'int', paramType: 'query' }
-  ]
-
-###
-  IDs API
-###
-
-server.get  "/ids/:id", getIds
-server.head "/ids/:id", getIds
-docs = swagger.createResource '/ids'
-docs.get "/ids/{id}", "Gets a list of ids (60 per request) found in the collection",
+docs.get "/ids/{id}", "Gets a list of all ids (60 per request) found in the collection",
   nickname: "getIds"
   parameters: [
     {name: 'id', description: 'Page number of ids, as used on website collections section.', required: true, dataType: 'int', paramType: 'path'}
