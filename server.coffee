@@ -143,10 +143,8 @@ server.use restify.fullResponse() # set CORS, eTag, other common headers
 server.use restify.gzipResponse()
 server.use(_check_cache()) if PRODUCTION
 
-swagger.configure server
-
 ###
-  Object API
+  Routes
 ###
 server.get  "/random", getRandomObject
 server.head "/random", getRandomObject
@@ -159,6 +157,10 @@ server.head "/object/:id", getObject
 server.get  "/ids/:id", getIds
 server.head "/ids/:id", getIds
 
+###
+  Documentation
+###
+swagger.configure server
 docs = swagger.createResource '/docs'
 docs.get "/random", "Gets information about a random object in the collection",
   nickname: "getRandom"
@@ -186,10 +188,9 @@ docs.get "/ids/{id}", "Gets a list of all ids (60 per request) found in the coll
   ]
 
 ###
-  Documentation
+  Static files
 ###
 server.get /\/*/, restify.serveStatic directory: './static', default: 'index.html', charSet: 'UTF-8'
-
 
 server.listen process.env.PORT or 80, ->
   console.log "[%s] #{server.name} listening at #{server.url}", process.pid
