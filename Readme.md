@@ -47,4 +47,3 @@ Dedicated to the memory of [Aaron Swartz][].
 [restify]: http://mcavage.github.com/node-restify
 
 [deliver]: https://github.com/gerhard/deliver
-[linode instance]: http://li363-137.members.linode.com
