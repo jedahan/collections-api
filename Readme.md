@@ -24,7 +24,7 @@ Dedicated to the memory of [Aaron Swartz][].
 
 #### Options
 
-  * Set `COLLECTIONS_API_NO_CACHE` to ignore the redis cache. This is useful for development.
+  * Set `PRODUCTION=false` to ignore the redis cache. This is useful for development.
 
 #### Deployment
 
