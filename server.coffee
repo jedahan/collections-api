@@ -4,62 +4,34 @@ cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
 redis = require 'redis'
 async = require 'async'
-toobusy = require 'toobusy'
-_ = require './lib/util'
+os = require 'os'
 
-cache = PRODUCTION = process.env.NODE_ENV is 'production'
+_ = require './lib/util'
+cache = require './lib/plugins/cache' if process.env.NODE_ENV is 'production'
+toobusy = require './lib/plugins/toobusy'
+scrape = require './lib/scrape'
+parse = require './lib/parse'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
-_check_if_busy = (req, res, next) ->
-  if toobusy()
-    res.send 503, "I'm busy right now, sorry."
-  else next()
-
-_check_cache = (options) ->
-  redis_url = require("url").parse(process.env.REDIS_URL or 'http://127.0.0.1:6379')
-  cache = require("redis").createClient redis_url.port, redis_url.hostname
-  cache.auth redis_url.auth.split(":")[1] if redis_url.auth?
-
-  cache.on 'error', (err) ->
-    console.error err
-
-  (req, res, next) ->
-    if req.method is 'GET'
-      cache.get req.getPath(), (err, reply) ->
-        console.error err if err?
-        if reply?
-          res.send JSON.parse reply
-        else
-          next()
-    else
-      next()
-
-_scrape = (url, parser, req, res, next) ->
-  request url, (err, response, body) ->
-    console.error err if err?
-    # The museum website redirects the user instead of doing a 404
-    if response.request.redirects.length
-      next new restify.ResourceNotFoundError "#{url} not found"
-    else
-      parser 'http'+'://'+req.headers.host+req.getHref(), body, (err, result) ->
-        if err?
-          next new restify.ForbiddenError err.message
-        else
-          cache.set req.getPath(), JSON.stringify(result), redis.print if PRODUCTION
-          res.send result
-
-queryIds = (req, res, next) ->
-  _scrape "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}", _parseIds, req, res, next
+getSomething = (url, parser, req, res, next) ->
+  scrape url, (err, body) ->
+    parser 'http://'+os.hostname()+req.getHref(), body, (err, result) ->
+      if err?
+        res.send new restify.ForbiddenError err.message
+      else
+        cache.set req.getPath(), JSON.stringify(result), redis.print if cache?
+        res.send result
 
 getIds = (req, res, next) ->
-  _scrape "#{scrape_url}?rpp=60&pg=#{req.params.id}", _parseIds, req, res, next
+  getSomething "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}", _parseIds, req, res, next
 
 getObject = (req, res, next) ->
-  _scrape "#{scrape_url}/#{req.params.id}", _parseObject, req, res, next
+  getSomething "#{scrape_url}/#{req.params.id}", _parseObject, req, res, next
 
 getRandomObject = (req, res, next) ->
-  request "#{server.url}/ids/1", (err, response, body) ->
+  request "#{server.url}/ids", (err, response, body) ->
+    console.log JSON.parse(body)._links
     max = JSON.parse(body)._links.last.href
     random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
 
@@ -96,34 +68,38 @@ _parseObject = (path, body, cb) ->
       when 'Provenance' then object[category] = _.remove_empty _.trim content.split ';'
 
   delete object[key] for key,value of object when value is null
-  object['_links'] = self: href: path
+  object['_links'] =
+    self: href: path
+    related: ({href: "http://#{os.hostname()}/object/#{id}"} for id in object['related-artworks'])
 
   cb null, object
 
 _parseIds = (path, body, cb) ->
-  page = +(/page=(\d+)/.exec(path)?[1] or 1)
-
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
 
+  unless /page=(\d+)/.exec(path)?
+    unless /\?/.exec(path)? then path += '?' else path += '&'
+    path += 'page=1'
+
+  page = + /page=(\d+)/.exec(path)?[1]
+
   $ = cheerio.load body
-  ids = {}
 
-  ids['ids'] = ((_.get_id $(a)) for a in $('.object-image')) or null
+  idarray = ((_.get_id $(a)) for a in $('.object-image')) or null
+  items = (href: "http://#{os.hostname()}/object/#{id}" for id in idarray)
+  ids = collection: href: path, items: items
 
-  self = self: href: path
-
-  first = first: href: path.replace(/page=(\d+)/, "page=#{1}")
-
-  if $('.pagination .next a').attr('href')?
-    next = next: href: path.replace(/page=(\d+)/, "page=#{page+1}")
-  if $('.pagination .prev a').attr('href')?
-    prev = prev: href: path.replace(/page=(\d+)/, "page=#{page-1}")
-
-  if id = $('.pagination a').last().attr('href').match(/\d+$/)
+  if id = $('.pagination a').first().attr('href')?.match(/pg=(.*)/)[1]
+    first = first: href: path.replace(/page=(\d+)/, "page=#{id}")
+  if id = $('.pagination .next a').attr('href').match(/pg=(.*)/)[1]
+    next = next: href: path.replace(/page=(\d+)/, "page=#{id}")
+  if id = $('.pagination .prev a').attr('href').match(/pg=(.*)/)[1]
+    prev = prev: href: path.replace(/page=(\d+)/, "page=#{id}")
+  if id = $('.pagination a').last().attr('href')?.match(/pg=(.*)/)[1]
     last = last: href: path.replace(/page=(\d+)/, "page=#{id}")
 
-  async.filter [self, first, prev, next, last], _.exists,  (results) ->
+  async.filter [first, prev, next, last], _.exists,  (results) ->
     ids['_links'] = {}
     for link in results
       for rel, val of link
@@ -136,12 +112,12 @@ _parseIds = (path, body, cb) ->
 ###
 server = restify.createServer()
 server.pre restify.pre.userAgentConnection()
-server.use _check_if_busy
+server.use toobusy()
 server.use restify.acceptParser server.acceptable # respond correctly to accept headers
 server.use restify.queryParser() # parse query variables
 server.use restify.fullResponse() # set CORS, eTag, other common headers
 server.use restify.gzipResponse()
-server.use(_check_cache()) if PRODUCTION
+server.use cache.check() if cache?
 
 ###
   Routes
@@ -149,13 +125,11 @@ server.use(_check_cache()) if PRODUCTION
 server.get  "/random", getRandomObject
 server.head "/random", getRandomObject
 
-server.get "/search", queryIds
-
 server.get  "/object/:id", getObject
 server.head "/object/:id", getObject
 
-server.get  "/ids/:id", getIds
-server.head "/ids/:id", getIds
+server.get  "/ids", getIds
+server.head "/ids", getIds
 
 ###
   Documentation
@@ -163,14 +137,7 @@ server.head "/ids/:id", getIds
 swagger.configure server
 docs = swagger.createResource '/docs'
 docs.get "/random", "Gets information about a random object in the collection",
-  nickname: "getRandom"
-
-docs.get "/search", "Gets a list of ids based on a search query",
-  nickname: "getQuery"
-  parameters: [
-    { name: 'query', description: 'search terms', required: true, dataType: 'string', paramType: 'query' }
-    { name: 'page', description: 'page to return of results', required: false, dataType: 'int', paramType: 'query' }
-  ]
+  nickname: "getRandomObject"
 
 docs.get "/object/{id}", "Gets information about a specific object in the collection",
   nickname: "getObject"
@@ -181,10 +148,11 @@ docs.get "/object/{id}", "Gets information about a specific object in the collec
     { code: 404, reason: "Object not found" }
   ]
 
-docs.get "/ids/{id}", "Gets a list of all ids (60 per request) found in the collection",
+docs.get "/ids", "Gets a list of ids (60 per request) found in the collection",
   nickname: "getIds"
   parameters: [
-    {name: 'id', description: 'Page number of ids, as used on website collections section.', required: true, dataType: 'int', paramType: 'path'}
+    { name: 'query', description: 'search terms if any', required: false, dataType: 'string', paramType: 'query' }
+    { name: 'page', description: 'page to return of results', required: false, dataType: 'int', paramType: 'query' }
   ]
 
 ###
