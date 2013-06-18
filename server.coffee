@@ -6,11 +6,12 @@ redis = require 'redis'
 async = require 'async'
 os = require 'os'
 
-_ = require './lib/util'
 cache = require './lib/plugins/cache' if process.env.NODE_ENV is 'production'
 toobusy = require './lib/plugins/toobusy'
+
 scrape = require './lib/scrape'
 parse = require './lib/parse'
+_ = require './lib/util'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
@@ -63,6 +64,7 @@ _parseObject = (path, body, cb) ->
     content = $(e).find('.accordion-inner > p').text().trim()
     switch category
       when 'Description' then object[category] = content
+      # TODO: fix content split to only work outside of ()
       when 'Provenance' then object[category] = _.remove_empty _.trim content.split ';'
 
   delete object[key] for key,value of object when value is null
