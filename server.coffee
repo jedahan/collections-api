@@ -31,14 +31,12 @@ getObject = (req, res, next) ->
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids", (err, response, body) ->
-    console.log JSON.parse(body)._links
     max = JSON.parse(body)._links.last.href
     random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
 
     request "#{server.url}/ids/#{random_page}", (err, response, body) ->
       ids = JSON.parse(body).ids
-      random_id = ids[Math.floor(Math.random() * ids.length) + 1]
-      request "#{server.url}/object/#{random_id}", (err, response, body) ->
+      request ids[Math.floor(Math.random() * ids.length) + 1].href, (err, response, body) ->
         res.send JSON.parse body
 
 _parseObject = (path, body, cb) ->
@@ -78,6 +76,8 @@ _parseIds = (path, body, cb) ->
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
 
+  # add page=1 as default
+  # TODO: can this be done in restify? default parameter passing?
   unless /page=(\d+)/.exec(path)?
     unless /\?/.exec(path)? then path += '?' else path += '&'
     path += 'page=1'
@@ -90,22 +90,15 @@ _parseIds = (path, body, cb) ->
   items = (href: "http://#{os.hostname()}/object/#{id}" for id in idarray)
   ids = collection: href: path, items: items
 
-  if id = $('.pagination a').first().attr('href')?.match(/pg=(.*)/)[1]
-    first = first: href: path.replace(/page=(\d+)/, "page=#{id}")
-  if id = $('.pagination .next a').attr('href').match(/pg=(.*)/)[1]
-    next = next: href: path.replace(/page=(\d+)/, "page=#{id}")
-  if id = $('.pagination .prev a').attr('href').match(/pg=(.*)/)[1]
-    prev = prev: href: path.replace(/page=(\d+)/, "page=#{id}")
-  if id = $('.pagination a').last().attr('href')?.match(/pg=(.*)/)[1]
-    last = last: href: path.replace(/page=(\d+)/, "page=#{id}")
+  for rel, a of {
+    first: $('.pagination a').first()
+    next: $('.pagination .next a')
+    prev: $('.pagination .prev a')
+    last: $('.pagination a').last() }
+    if id = a.attr('href')?.match(/pg=(.*)/)[1]
+      ids['_links'][rel] = href: path.replace(/page=(\d+)/, "page=#{id}")
 
-  async.filter [first, prev, next, last], _.exists,  (results) ->
-    ids['_links'] = {}
-    for link in results
-      for rel, val of link
-        ids['_links'][rel] = val
-
-    cb null, ids
+  cb null, ids
 
 ###
   Server Options
