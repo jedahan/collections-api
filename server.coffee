@@ -91,6 +91,7 @@ _parseIds = (path, body, cb) ->
   idarray = ((_.get_id $(a)) for a in $('.object-image')) or null
   items = (href: "http://#{os.hostname()}/object/#{id}" for id in idarray)
   ids = collection: href: path, items: items
+  ids['_links'] = {}
 
   for rel, a of {
     first: $('.pagination a').first()
