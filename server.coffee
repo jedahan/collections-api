@@ -82,16 +82,19 @@ _parseIds = (req, body, cb) ->
 
   $ = cheerio.load body
 
-  idarray = ((_.get_id $(a)) for a in $('.object-image')) or null
-  items = (href: "http://#{os.hostname()}/object/#{id}" for id in idarray)
-  ids = collection: href: "http://#{os.hostname()+req.getHref()}", items: items
+  idarray = ((_.get_id $(a)) for a in $('.object-image'))
+  if idarray.length is 0
+    cb new restify.NotFoundError "No results for #{req.params.query}"
+  else
+    items = (href: "http://#{os.hostname()}/object/#{id}" for id in idarray)
+    ids = collection: href: "http://#{os.hostname()+req.getHref()}", items: items
 
-  ids['_links'] = first: href: "#{id_path}1"
-  ids['_links'].last = href: "#{id_path}" + $('.pagination a').last().attr('href')?.match(/\d+$/) or 6240
-  if page isnt 1 then ids['_links'].prev = href: "#{id_path}" + page-1
-  if page isnt + $('.pagination a').last().attr('href')?.match(/\d+$/) or page isnt 6240 then ids['_links'].next = href: "#{id_path}" + page+1
+    ids['_links'] = first: href: "#{id_path}1"
+    ids['_links'].last = href: "#{id_path}" + $('.pagination a').last().attr('href')?.match(/\d+$/) or 6240
+    if page isnt 1 then ids['_links'].prev = href: "#{id_path}" + page-1
+    if page isnt + $('.pagination a').last().attr('href')?.match(/\d+$/) or page isnt 6240 then ids['_links'].next = href: "#{id_path}" + page+1
 
-  cb null, ids
+    cb null, ids
 
 ###
   Server Options
