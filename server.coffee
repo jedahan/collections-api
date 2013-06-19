@@ -37,15 +37,15 @@ getRandomObject = (req, res, next) ->
     max = JSON.parse(body)._links.last.href
     random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
 
-    request "#{server.url}/ids/#{random_page}", (err, response, body) ->
-      ids = JSON.parse(body).ids
+    request "#{server.url}/ids?page=#{random_page}", (err, response, body) ->
+      ids = JSON.parse(body).collection.items
       request ids[Math.floor(Math.random() * ids.length) + 1].href, (err, response, body) ->
         res.send JSON.parse body
 
-_parseObject = (path, body, cb) ->
-  throw new Error "body empty" unless body?
+_parseObject = (req, body, cb) ->
+  throw new Error "missing body" unless body?
   throw new Error "missing callback" unless cb?
-  throw new Error "empty path" unless path?
+  throw new Error "missing req" unless req?
 
   $ = cheerio.load body
   object = {}
@@ -55,7 +55,7 @@ _parseObject = (path, body, cb) ->
 
   # make sure Where always returns an array
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
-  object['id'] = + /\d+/.exec(path)[0]
+  object['id'] = + req.params.id
   object['gallery-id'] = _.get_id($('.gallery-id a')) or null
   object['image'] = $('a[name="art-object-fullscreen"] > img').attr('src')?.match(/(^http.*)/)?[0]?.replace('web-large','original')
   object['related-artworks'] = ((_.get_id $(a)) for a in $('.related-content-container .object-info a')) or null
@@ -71,7 +71,7 @@ _parseObject = (path, body, cb) ->
 
   delete object[key] for key,value of object when value is null
   object['_links'] =
-    self: href: path
+    self: href: "http://#{os.hostname()+req.getHref()}"
     related: ({href: "http://#{os.hostname()}/object/#{id}"} for id in object['related-artworks'])
 
   cb null, object
