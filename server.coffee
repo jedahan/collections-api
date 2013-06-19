@@ -18,11 +18,8 @@ scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 getSomething = (url, parser, req, res, next) ->
   scrape url, (err, body) ->
     parser req, body, (err, result) ->
-      if err?
-        res.send new restify.ForbiddenError err.message
-      else
-        cache.set req.getPath(), JSON.stringify(result), redis.print if cache?
-        res.send result
+      cache.set req.getPath(), JSON.stringify(result), redis.print if cache? and not err?
+      res.send err or result
 
 getIds = (req, res, next) ->
   req.params.page ?= 1
