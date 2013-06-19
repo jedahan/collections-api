@@ -67,8 +67,8 @@ _parseObject = (req, body, cb) ->
     content = $(e).find('.accordion-inner > p').text().trim()
     switch category
       when 'Description' then object[category] = content
-      # TODO: fix content split to only work outside of ()
-      when 'Provenance' then object[category] = _.remove_empty _.trim content.split ';'
+      # Split on ; that are not inside ()
+      when 'Provenance' then object[category] = _.remove_empty _.trim content.split(/;(?!((?![\(\)]).)*\))/)
 
   delete object[key] for key,value of object when value is null
   object['_links'] =

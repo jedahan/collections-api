@@ -5,6 +5,6 @@ util = module.exports =
   arrify: (str) -> str.split /\r\n/
   remove_empty: (arr) -> arr.filter (e) -> e.length  
   process: (str) -> flatten @remove_empty remove_count @arrify str
-  trim: (arr) -> str.trim() for str in arr
+  trim: (arr) -> str.trim() for str in arr when str?
   exists: (item, cb) -> cb item?
   get_id: (el) -> +(el.attr('href')?.match(/\d+/)?[0])
