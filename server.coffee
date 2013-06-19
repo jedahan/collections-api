@@ -30,7 +30,10 @@ getIds = (req, res, next) ->
   getSomething "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}", _parseIds, req, res, next
 
 getObject = (req, res, next) ->
-  getSomething "#{scrape_url}/#{req.params.id}", _parseObject, req, res, next
+  if req.params.id
+    getSomething "#{scrape_url}/#{req.params.id}", _parseObject, req, res, next
+  else
+    getRandomObject req, res, next
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids", (err, response, body) ->
