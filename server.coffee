@@ -17,9 +17,12 @@ scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
 getSomething = (url, parser, req, res, next) ->
   scrape url, (err, body) ->
-    parser req, body, (err, result) ->
-      cache.set req.getPath(), JSON.stringify(result), redis.print if cache? and not err?
-      res.send err or result
+    if err
+      res.send err
+    else
+      parser req, body, (err, result) ->
+        cache.set req.getPath(), JSON.stringify(result), redis.print if cache? and not err?
+        res.send err or result
 
 getIds = (req, res, next) ->
   req.params.page ?= 1
