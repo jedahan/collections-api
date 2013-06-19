@@ -17,7 +17,7 @@ scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
 getSomething = (url, parser, req, res, next) ->
   scrape url, (err, body) ->
-    parser 'http://'+os.hostname()+req.getHref(), body, (err, result) ->
+    parser req, body, (err, result) ->
       if err?
         res.send new restify.ForbiddenError err.message
       else
@@ -25,6 +25,8 @@ getSomething = (url, parser, req, res, next) ->
         res.send result
 
 getIds = (req, res, next) ->
+  req.params.page ?= 1
+  req.params.query ?= '*'
   getSomething "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}", _parseIds, req, res, next
 
 getObject = (req, res, next) ->
@@ -74,32 +76,23 @@ _parseObject = (path, body, cb) ->
 
   cb null, object
 
-_parseIds = (path, body, cb) ->
+_parseIds = (req, body, cb) ->
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
+  page = + req.params.page
 
-  # add page=1 as default
-  # TODO: can this be done in restify? default parameter passing?
-  unless /page=(\d+)/.exec(path)?
-    unless /\?/.exec(path)? then path += '?' else path += '&'
-    path += 'page=1'
-
-  page = + /page=(\d+)/.exec(path)?[1]
+  id_path = "http://#{os.hostname()}/ids?page="
 
   $ = cheerio.load body
 
   idarray = ((_.get_id $(a)) for a in $('.object-image')) or null
   items = (href: "http://#{os.hostname()}/object/#{id}" for id in idarray)
-  ids = collection: href: path, items: items
-  ids['_links'] = {}
+  ids = collection: href: "http://#{os.hostname()+req.getHref()}", items: items
 
-  for rel, a of {
-    first: $('.pagination a').first()
-    next: $('.pagination .next a')
-    prev: $('.pagination .prev a')
-    last: $('.pagination a').last() }
-    if id = a.attr('href')?.match(/pg=(.*)/)[1]
-      ids['_links'][rel] = href: path.replace(/page=(\d+)/, "page=#{id}")
+  ids['_links'] = first: href: "#{id_path}1"
+  ids['_links'].last = href: "#{id_path}" + $('.pagination a').last().attr('href')?.match(/\d+$/) or 6240
+  if page isnt 1 then ids['_links'].prev = href: "#{id_path}" + page-1
+  if page isnt + $('.pagination a').last().attr('href')?.match(/\d+$/) or page isnt 6240 then ids['_links'].next = href: "#{id_path}" + page+1
 
   cb null, ids
 
