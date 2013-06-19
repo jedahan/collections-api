@@ -59,6 +59,7 @@ _parseObject = (req, body, cb) ->
   object['gallery-id'] = _.get_id($('.gallery-id a')) or null
   object['image'] = $('a[name="art-object-fullscreen"] > img').attr('src')?.match(/(^http.*)/)?[0]?.replace('web-large','original')
   object['related-artworks'] = ((_.get_id $(a)) for a in $('.related-content-container .object-info a')) or null
+  object['related-images'] = ($(img).attr('src')?.replace('web-additional','original') for img in $('.tab-content.visible .object img') when $(img).attr('src').match(/images.metmuseum.org/)) or null
 
   # add description and provenance
   $('.promo-accordion > li').each (i, e) ->
