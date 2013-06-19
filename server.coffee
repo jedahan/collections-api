@@ -30,10 +30,7 @@ getIds = (req, res, next) ->
   getSomething "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}", _parseIds, req, res, next
 
 getObject = (req, res, next) ->
-  if req.params.id
-    getSomething "#{scrape_url}/#{req.params.id}", _parseObject, req, res, next
-  else
-    getRandomObject req, res, next
+  getSomething "#{scrape_url}/#{req.params.id}", _parseObject, req, res, next
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids", (err, response, body) ->
@@ -119,6 +116,9 @@ server.use cache.check() if cache?
 ###
 server.get  "/random", getRandomObject
 server.head "/random", getRandomObject
+
+server.get  "/object", getRandomObject
+server.head "/object", getRandomObject
 
 server.get  "/object/:id", getObject
 server.head "/object/:id", getObject
