@@ -56,9 +56,9 @@ _parseObject = (req, body, cb) ->
   # make sure Where always returns an array
   object['Where'] = [object['Where']] if typeof(object['Where']) is 'string'
   object['id'] = + req.params.id
-  object['gallery-id'] = _.get_id($('.gallery-id a')) or null
+  object['gallery-id'] = _.a_to_id($('.gallery-id a')) or null
   object['image'] = $('a[name="art-object-fullscreen"] > img').attr('src')?.match(/(^http.*)/)?[0]?.replace('web-large','original')
-  object['related-artworks'] = ((_.get_id $(a)) for a in $('.related-content-container .object-info a')) or null
+  object['related-artworks'] = ((_.a_to_a $(a)) for a in $('.related-content-container .object-info a')) or null
   object['related-images'] = ($(img).attr('src')?.replace('web-additional','original') for img in $('.tab-content.visible .object img') when $(img).attr('src').match(/images.metmuseum.org/)) or null
 
   # add description and provenance
@@ -73,7 +73,7 @@ _parseObject = (req, body, cb) ->
   delete object[key] for key,value of object when value is null
   object['_links'] =
     self: href: "http://#{os.hostname()+req.getHref()}"
-    related: ({href: "http://#{os.hostname()}/object/#{id}"} for id in object['related-artworks'])
+    related: (href: _.id_to_a id for id in object['related-artworks'])
 
   cb null, object
 
@@ -86,17 +86,17 @@ _parseIds = (req, body, cb) ->
 
   $ = cheerio.load body
 
-  idarray = ((_.get_id $(a)) for a in $('.object-image'))
+  idarray = ((_.a_to_id $(a)) for a in $('.object-image'))
   if idarray.length is 0
     cb new restify.NotFoundError "No results for #{req.params.query}"
   else
-    items = (href: "http://#{os.hostname()}/object/#{id}" for id in idarray)
+    items = (href: id_to_a(id) for id in idarray)
     ids = collection: href: "http://#{os.hostname()+req.getHref()}", items: items
 
     ids['_links'] = first: href: "#{id_path}1"
-    ids['_links'].last = href: "#{id_path}" + $('.pagination a').last().attr('href')?.match(/\d+$/) or 6240
+    ids['_links'].last = href: "#{id_path}" _.a_to_id $('.pagination a').last() or 6240
     if page isnt 1 then ids['_links'].prev = href: "#{id_path}" + page-1
-    if page isnt + $('.pagination a').last().attr('href')?.match(/\d+$/) or page isnt 6240 then ids['_links'].next = href: "#{id_path}" + page+1
+    if page isnt _.a_to_id $('.pagination a').last() or page isnt 6240 then ids['_links'].next = href: "#{id_path}" + page+1
 
     cb null, ids
 
