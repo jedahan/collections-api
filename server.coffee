@@ -1,9 +1,7 @@
 restify = require 'restify'
 request = require 'request'
-cheerio = require 'cheerio'
 swagger = require 'swagger-doc'
 redis = require 'redis'
-async = require 'async'
 os = require 'os'
 
 # Middleware
@@ -11,18 +9,18 @@ cache = require './lib/plugins/cache' if process.env.NODE_ENV is 'production'
 toobusy = require './lib/plugins/toobusy'
 
 # Scraping to json
-parsers = require './lib/parsers'
+parseIds = require './lib/parsers/ids'
+parseObject = require './lib/parsers/object'
 scrape = require './lib/scrape'
-_ = require './lib/util'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
-_getSomething = (url, parser, cb) ->
+_getSomething = (id, url, parser, cb) ->
   scrape url, (err, body) ->
     if err
       cb err, body
     else
-      parser req.params.page or req.params.id, body, (err, result) ->
+      parser id, body, (err, result) ->
         if err
           cb err, result
         else
@@ -34,11 +32,11 @@ getIds = (req, res, next) ->
   req.params.page ?= 1
   req.params.query ?= '*'
   url = "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}"
-  _getSomething url, parsers.parseIds, (err, result) -> res.send err or result
+  _getSomething req.params.page, url, parseIds, (err, result) -> res.send err or result
 
 getObject = (req, res, next) ->
   url = "#{scrape_url}/#{req.params.id}"
-  _getSomething url parsers.parseObject, (err, result) -> res.send err or result
+  _getSomething req.params.id, url, parseObject, (err, result) -> res.send err or result
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids", (err, response, body) ->

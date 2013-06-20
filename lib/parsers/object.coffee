@@ -1,7 +1,8 @@
 cheerio = require 'cheerio'
 os = require 'os'
+_ = require '../util'
 
-module.exports = (id, body, cb) ->
+parseObject = (id, body, cb) ->
   throw new Error "missing body" unless body?
   throw new Error "missing callback" unless cb?
   throw new Error "missing id" unless id?
@@ -30,9 +31,8 @@ module.exports = (id, body, cb) ->
       when 'Provenance' then object[category] = _.remove_empty _.trim content.split(/;(?!((?![\(\)]).)*\))/)
 
   delete object[key] for key,value of object when value is null
-  object['_links'] =
-    related: (href: _.id_to_a id for id in object['related-artworks'])
+  object['_links'] = related: (href: _.id_to_a id for id in object['related-artworks'])
 
   cb null, object
 
-module.exports {parseIds, parseObject}
+module.exports parseObject

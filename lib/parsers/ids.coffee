@@ -1,4 +1,8 @@
-module.exports = (page, body, cb) ->
+cheerio = require 'cheerio'
+os = require 'os'
+_ = require '../util'
+
+parseIds = (page, body, cb) ->
   throw new Error "body empty" unless body?
   throw new Error "missing callback" unless cb?
   page = + page
@@ -20,3 +24,5 @@ module.exports = (page, body, cb) ->
     if page isnt _.a_to_id $('.pagination a').last() or page isnt 6240 then ids['_links'].next = href: "#{id_path}" + page+1
 
     cb null, ids
+
+module.exports = parseIds
