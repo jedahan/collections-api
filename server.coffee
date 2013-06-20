@@ -2,7 +2,6 @@ restify = require 'restify'
 request = require 'request'
 swagger = require 'swagger-doc'
 redis = require 'redis'
-os = require 'os'
 
 # Middleware
 cache = require './lib/plugins/cache' if process.env.NODE_ENV is 'production'
