@@ -1,7 +1,6 @@
 restify = require 'restify'
 request = require 'request'
 swagger = require 'swagger-doc'
-redis = require 'redis'
 
 # Middleware
 cache = require './lib/plugins/cache' if process.env.NODE_ENV is 'production'
@@ -23,7 +22,7 @@ _getSomething = (id, url, parser, cb) ->
         if err
           cb err, result
         else
-          cache.set req.getPath(), JSON.stringify(result), redis.print if cache?
+          cache.set req.getPath(), JSON.stringify(result), console.log if cache?
           result['_links'].self = href: "http://#{os.hostname()+req.getHref()}"
           cb null, result
 
