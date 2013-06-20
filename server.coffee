@@ -13,29 +13,32 @@ toobusy = require './lib/plugins/toobusy'
 # Scraping to json
 parsers = require './lib/parsers'
 scrape = require './lib/scrape'
-parse = require './lib/parse'
 _ = require './lib/util'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
-_getSomething = (url, parser, req, res, next) ->
+_getSomething = (url, parser, cb) ->
   scrape url, (err, body) ->
     if err
-      res.send err
+      cb err, body
     else
-      parser req, body, (err, result) ->
-        cache.set req.getPath(), JSON.stringify(result), redis.print if cache? and not err?
-        res.send err or result
+      parser req.params.page or req.params.id, body, (err, result) ->
+        if err
+          cb err, result
+        else
+          cache.set req.getPath(), JSON.stringify(result), redis.print if cache?
+          result['_links'].self = href: "http://#{os.hostname()+req.getHref()}"
+          cb null, result
 
 getIds = (req, res, next) ->
   req.params.page ?= 1
   req.params.query ?= '*'
   url = "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}"
-  _getSomething url, parsers.parseIds, req, res, next
+  _getSomething url, parsers.parseIds, (err, result) -> res.send err or result
 
 getObject = (req, res, next) ->
   url = "#{scrape_url}/#{req.params.id}"
-  _getSomething url parsers.parseObject, req, res, next
+  _getSomething url parsers.parseObject, (err, result) -> res.send err or result
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids", (err, response, body) ->
