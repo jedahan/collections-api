@@ -1,4 +1,4 @@
-os = require 'os'
+hostname = require('os').hostname()
 
 remove_count = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
 flatten = (arr) -> if arr?.length is 1 then arr[0] else arr
@@ -10,5 +10,5 @@ util = module.exports =
   trim: (arr) -> str.trim() for str in arr when str?
   exists: (item, cb) -> cb item?
   a_to_id: (el) -> +(el.attr('href')?.match(/\d+/)?[0])
-  id_to_a: (id) -> "http://#{os.hostname()}/object/#{id}"
-  a_to_a: (url) -> id_to_a a_to_id url
+  id_to_a: (id) -> "http://#{hostname}/object/#{id}"
+  a_to_a: (url) -> @id_to_a @a_to_id url

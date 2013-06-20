@@ -1,5 +1,4 @@
 cheerio = require 'cheerio'
-os = require 'os'
 _ = require '../util'
 
 parseObject = (id, body, cb) ->
@@ -35,4 +34,4 @@ parseObject = (id, body, cb) ->
 
   cb null, object
 
-module.exports parseObject
+module.exports = parseObject

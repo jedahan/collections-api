@@ -13,28 +13,28 @@ scrape = require './lib/scrape'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
-_getSomething = (id, url, parser, cb) ->
+_getSomething = (req, url, parser, cb) ->
   scrape url, (err, body) ->
     if err
       cb err, body
     else
-      parser id, body, (err, result) ->
+      parser req.params.page or req.params.id, body, (err, result) ->
         if err
           cb err, result
         else
           cache.set req.getPath(), JSON.stringify(result), console.log if cache?
-          result['_links'].self = href: "http://#{os.hostname()+req.getHref()}"
+          console.log result['_links'].self = href: "http://#{req.headers.host+req.getHref()}"
           cb null, result
 
 getIds = (req, res, next) ->
   req.params.page ?= 1
   req.params.query ?= '*'
   url = "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}"
-  _getSomething req.params.page, url, parseIds, (err, result) -> res.send err or result
+  _getSomething req, url, parseIds, (err, result) -> res.send err or result
 
 getObject = (req, res, next) ->
   url = "#{scrape_url}/#{req.params.id}"
-  _getSomething req.params.id, url, parseObject, (err, result) -> res.send err or result
+  _getSomething req, url, parseObject, (err, result) -> res.send err or result
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids", (err, response, body) ->
@@ -43,8 +43,10 @@ getRandomObject = (req, res, next) ->
 
     request "#{server.url}/ids?page=#{random_page}", (err, response, body) ->
       ids = JSON.parse(body).collection.items
-      request ids[Math.floor(Math.random() * ids.length) + 1].href, (err, response, body) ->
-        res.send JSON.parse body
+      console.log random_page = ids[Math.floor(Math.random() * ids.length) + 1].href
+      request random_page, (err, response, body) ->
+        console.log body
+        res.send err or JSON.parse body
 
 ###
   Server Options
