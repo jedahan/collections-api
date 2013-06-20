@@ -30,11 +30,15 @@ getIds = (req, res, next) ->
   req.params.page ?= 1
   req.params.query ?= '*'
   url = "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}"
-  _getSomething req, url, parseIds, (err, result) -> res.send err or result
+  _getSomething req, url, parseIds, (err, result) ->
+    res.charSet 'UTF-8'
+    res.send err or result
 
 getObject = (req, res, next) ->
   url = "#{scrape_url}/#{req.params.id}"
-  _getSomething req, url, parseObject, (err, result) -> res.send err or result
+  _getSomething req, url, parseObject, (err, result) ->
+    res.charSet 'UTF-8'
+    res.send err or result
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids", (err, response, body) ->
