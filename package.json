@@ -8,6 +8,7 @@
 , "dependencies":
   { "cheerio": "0.12.x"
   , "coffee-script": "1.6.x"
+  , "node-dev": "2.0.x"
   , "redis": "0.8.x"
   , "request": "2.21.x"
   , "restify": "2.6.x"

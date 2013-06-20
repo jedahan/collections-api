@@ -1,3 +1,3 @@
 coffee: coffee --compile --watch test/
-supervisor: sudo coffee --watch server.coffee
-redis: redis-server
+supervisor: sudo node-dev server.coffee
+redis: redis-server --loglevel warning
