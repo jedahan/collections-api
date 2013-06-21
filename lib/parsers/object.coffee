@@ -17,7 +17,6 @@ parseObject = (id, body, cb) ->
   object['id'] = + id
   object['gallery-id'] = _.a_to_id($('.gallery-id a')) or null
   object['image'] = $('a[name="art-object-fullscreen"] > img').attr('src')?.match(/(^http.*)/)?[0]?.replace('web-large','original')
-  object['related-artworks'] = ((_.a_to_a $(a)) for a in $('.related-content-container .object-info a')) or null
   object['related-images'] = ($(img).attr('src')?.replace('web-additional','original') for img in $('.tab-content.visible .object img') when $(img).attr('src').match(/images.metmuseum.org/)) or null
 
   # add description and provenance
@@ -29,8 +28,8 @@ parseObject = (id, body, cb) ->
       # Split on ; that are not inside ()
       when 'Provenance' then object[category] = _.remove_empty _.trim content.split(/;(?!((?![\(\)]).)*\))/)
 
-  delete object[key] for key,value of object when value is null
-  object['_links'] = related: (href: _.id_to_a id for id in object['related-artworks'])
+  delete object[key] for key,value of object when value is null or value?.length is 0
+  object['_links'] = "related-artworks": (href: (_.a_to_a $(a)) for a in $('.related-content-container .object-info a')) or null
 
   cb null, object
 
