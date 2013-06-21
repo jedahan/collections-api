@@ -28,9 +28,11 @@ _getSomething = (req, url, parser, cb) ->
           cb null, result
 
 getIds = (req, res, next) ->
+  req.params.images ?= false
   req.params.page ?= 1
   req.params.query ?= '*'
   url = "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}"
+  url += "&ao=on" if req.params.images is 'true'
   _getSomething req, url, parseIds, (err, result) ->
     res.charSet 'UTF-8'
     res.send err or result
@@ -42,12 +44,16 @@ getObject = (req, res, next) ->
     res.send err or result
 
 getRandomObject = (req, res, next) ->
-  request "#{server.url}/ids", (err, response, body) ->
+  url = "#{server.url}/ids"
+  url += "?images=true" if req.params.images is 'true'
+  request url, (err, response, body) ->
     max = JSON.parse(body)._links.last?.href
     if max
       random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
 
-      request "#{server.url}/ids?page=#{random_page}", (err, response, body) ->
+      url = "#{server.url}/ids?page=#{random_page}"
+      url += "&images=true" if req.params.images is 'true'
+      request url, (err, response, body) ->
         ids = JSON.parse(body).collection.items
         random_page = ids[Math.floor(Math.random() * ids.length)].href
         request random_page, (err, response, body) ->
@@ -89,6 +95,9 @@ swagger.configure server
 docs = swagger.createResource '/docs'
 docs.get "/random", "Gets information about a random object in the collection",
   nickname: "getRandomObject"
+  parameters: [
+    { name: 'images', description: 'Only list objects that have images?', required: false, dataType: 'boolean', paramType: 'query' }
+  ]
 
 docs.get "/object/{id}", "Gets information about a specific object in the collection",
   nickname: "getObject"
@@ -104,6 +113,7 @@ docs.get "/ids", "Gets a list of ids (60 per request) found in the collection",
   parameters: [
     { name: 'query', description: 'search terms if any', required: false, dataType: 'string', paramType: 'query' }
     { name: 'page', description: 'page to return of results', required: false, dataType: 'int', paramType: 'query' }
+    { name: 'images', description: 'Only list objects that have images?', required: false, dataType: 'boolean', paramType: 'query' }
   ]
 
 ###
