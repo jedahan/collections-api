@@ -43,14 +43,17 @@ getObject = (req, res, next) ->
 
 getRandomObject = (req, res, next) ->
   request "#{server.url}/ids", (err, response, body) ->
-    max = JSON.parse(body)._links.last.href
-    random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
+    max = JSON.parse(body)._links.last?.href
+    if max
+      random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
 
-    request "#{server.url}/ids?page=#{random_page}", (err, response, body) ->
-      ids = JSON.parse(body).collection.items
-      random_page = ids[Math.floor(Math.random() * ids.length) + 1].href
-      request random_page, (err, response, body) ->
-        res.send err or JSON.parse body
+      request "#{server.url}/ids?page=#{random_page}", (err, response, body) ->
+        ids = JSON.parse(body).collection.items
+        random_page = ids[Math.floor(Math.random() * ids.length) + 1].href
+        request random_page, (err, response, body) ->
+          res.send err or JSON.parse body
+    else
+      res.send new restify.NotFoundError "cannot find the last page of ids"
 
 ###
   Server Options
