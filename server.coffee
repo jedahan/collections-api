@@ -49,7 +49,7 @@ getRandomObject = (req, res, next) ->
 
       request "#{server.url}/ids?page=#{random_page}", (err, response, body) ->
         ids = JSON.parse(body).collection.items
-        random_page = ids[Math.floor(Math.random() * ids.length) + 1].href
+        random_page = ids[Math.floor(Math.random() * ids.length)].href
         request random_page, (err, response, body) ->
           res.send err or JSON.parse body
     else
