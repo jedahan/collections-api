@@ -2,16 +2,16 @@ restify = require 'restify'
 request = require 'request'
 swagger = require 'swagger-doc'
 
+scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
+
 # Middleware
 cache = require './lib/plugins/cache' if process.env.NODE_ENV is 'production'
 toobusy = require './lib/plugins/toobusy'
 
-# Scraping to json
+# Scraping and parsing to json
+scrape = require './lib/scrape'
 parseIds = require './lib/parsers/ids'
 parseObject = require './lib/parsers/object'
-scrape = require './lib/scrape'
-
-scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
 
 _getSomething = (req, url, parser, cb) ->
   scrape url, (err, body) ->
