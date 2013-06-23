@@ -16,13 +16,14 @@ parseIds = (page, body, cb) ->
     cb new restify.NotFoundError
   else
     items = (href: _.a_to_a($(a)) for a in $('.object-image'))
-    ids = collection: href: "#{id_path}#{page}", items: items, _links: first: href: "#{id_path}" + 1
+    console.log ids = collection: href: "#{id_path}#{page}", items: items, _links: first: href: "#{id_path}" + 1
 
     last_link = $('#phcontent_0_phfullwidthcontent_0_ObjectListPagination_rptPagination_paginationLineItem_10 > a')
+    last_page = last_link.attr('href').match(/pg=(\d+)/)[1] unless last_link.length is 0
 
     ids['_links'].prev = href: "#{id_path}" + page-1 unless page is 1
-    ids['_links'].next = href: "#{id_path}" + page+1 unless page is last_id
-    ids['_links'].last = href: "#{id_path}" + last_link.attr('href').match(/pg=(\d+)/)[1] unless last_link.length is 0
+    ids['_links'].next = href: "#{id_path}" + page+1 unless page is last_page
+    ids['_links'].last = href: "#{id_path}" + last_page
 
     cb null, ids
 
