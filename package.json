@@ -19,7 +19,6 @@
   { "api-easy": "0.3.x"
   , "chai": "1.7.x"
   , "coffee-script": "1.6.x"
-  , "supervisor": "0.5.x"
   }
 , "engines": {
     "node": "0.10.x",

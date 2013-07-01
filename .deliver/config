@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 APP="collections-api"
-HOSTS="joyent"
+HOSTS="scrapi.org"
 PORT="80"
 STRATEGY="nodejs"
 SUPERVISOR="bluepill"
