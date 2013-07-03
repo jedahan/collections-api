@@ -1,3 +1,2 @@
-coffee: coffee --compile --watch test/
-server: node-dev server.coffee
+server: coffee server.coffee
 redis: redis-server --loglevel warning
