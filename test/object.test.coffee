@@ -1,3 +1,5 @@
+# Yes, we even have some tests
+
 APIeasy = require 'api-easy'
 expect = require('chai').expect
 

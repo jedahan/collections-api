@@ -1,3 +1,8 @@
+###
+ This utility function just wraps some of the common idiosyncracies of
+ the museum's server config
+###
+
 request = require 'request'
 restify = require 'restify'
 

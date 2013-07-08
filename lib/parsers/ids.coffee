@@ -1,10 +1,26 @@
+###
+  The id parser takes a page number and html, and returns an error and id object
+  the page number can be an int or string (int preferred), and is used for hyperlinking
+  the html body must be a string, where the ids are extracted
+  the callback passes an error (404 not found), or parsed id object
+
+  for example:
+
+    request = require 'request'
+    parseids = require 'lib/parsers/ids'
+
+    request 'http://metmuseum.org/search-the-collections/3', (error, response, body) ->
+      parseids 3, '<img class="object-image" href="metmuseum.org/blah.jpg" />', (err, ids) ->
+        console.log err or ids
+###
+
 cheerio = require 'cheerio'
 _ = require '../util'
 
 hostname = require('os').hostname()
 
 parseIds = (page, body, cb) ->
-  throw new Error "[parseIds] missing page" unless page?
+  throw new Error "[parseIds] missing page" unless page? # TODO: extract page from body
   throw new Error "[parseIds] missing body" unless body?
   throw new Error "[parseIds] missing callback" unless cb?
 

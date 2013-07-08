@@ -1,3 +1,6 @@
+# Looks like perl, don't it?
+# A host of common string processing functions for the parsers
+
 hostname = require('os').hostname()
 
 remove_count = (arr) -> str.replace(/\([0-9,]+\)|:/, '').trim() for str in arr
