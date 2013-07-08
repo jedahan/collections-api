@@ -30,7 +30,7 @@ Dedicated to the memory of [Aaron Swartz][].
 
   To spin up a heroku instance, just `heroku apps:create --addons redistogo`, `git remote add heroku YOUR_HEROKU_GIT_URI`, and `git push heroku master`.
 
-  To deliver anywhere else, install [deliver][], edit `.deliver/config`, and run `deliver`. This has been tested on Ubuntu 12.04 and OSX 10.8.
+  To deliver anywhere else, install [deliver][], edit `.deliver/config`, and run `deliver`. This has been tested on SmartOS 12, Ubuntu 12.04, and OSX 10.8.
 
 [CC0]: http://creativecommons.org/publicdomain/zero/1.0
 [collections]: http://www.metmuseum.org/collections
