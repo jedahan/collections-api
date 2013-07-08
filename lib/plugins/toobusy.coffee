@@ -1,3 +1,8 @@
+###
+  Toobusy is a mozilla module that checks if the server is under too much load to complete a request.
+  Much better than having an unending queue and having to restart
+###
+
 module.exports = ->
   toobusy = require 'toobusy'
 
