@@ -31,7 +31,7 @@ getIds = (req, res, next) ->
   req.params.page ?= 1
   req.params.query ?= '*'
   url = "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}"
-  url += "&ao=on" if req.params.images is 'true'
+  url += "&ao=on" if req.params.images?[0] is 't'
   _getSomething req, url, parseIds, (err, result) ->
     res.charSet 'UTF-8'
     res.send err or result
@@ -44,14 +44,14 @@ getObject = (req, res, next) ->
 
 getRandomObject = (req, res, next) ->
   client = restify.createJsonClient url: server.url
-  images = "?images=true" if req.params.images
+  images = if req.params.images?[0] is 't' then "images=true" else ""
   response = res
 
-  client.get "/ids"+images, (err, req, res, obj) ->
-    if max = obj._links.last?.href
+  client.get "/ids?"+images, (err, req, res, obj) ->
+    if max = obj._links?.last?.href
       random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
 
-      client.get "/ids?page=#{random_page}"+images, (err, req, res, obj) ->
+      client.get "/ids?page=#{random_page}&"+images, (err, req, res, obj) ->
         ids = obj.collection.items
         random_page = ids[Math.floor(Math.random() * ids.length)].href
 
