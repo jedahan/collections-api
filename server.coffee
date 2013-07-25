@@ -1,5 +1,4 @@
 restify = require 'restify'
-request = require 'request'
 swagger = require 'swagger-doc'
 
 scrape_url = 'http://www.metmuseum.org/Collections/search-the-collections'
@@ -44,20 +43,20 @@ getObject = (req, res, next) ->
     res.send err or result
 
 getRandomObject = (req, res, next) ->
-  url = "#{server.url}/ids"
-  url += "?images=true" if req.params.images is 'true'
-  request url, (err, response, body) ->
-    max = JSON.parse(body)._links.last?.href
-    if max
+  client = restify.createJsonClient url: server.url
+  images = "?images=true" if req.params.images
+  response = res
+
+  client.get "/ids"+images, (err, req, res, obj) ->
+    if max = obj._links.last?.href
       random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
 
-      url = "#{server.url}/ids?page=#{random_page}"
-      url += "&images=true" if req.params.images is 'true'
-      request url, (err, response, body) ->
-        ids = JSON.parse(body).collection.items
-        random_page = ids[Math.floor(Math.random() * ids.length)].href
-        request random_page, (err, response, body) ->
-          res.send err or JSON.parse body
+      client.get "/ids?page=#{random_page}"+images, (err, req, res, obj) ->
+        ids = obj.collection.items
+        console.log random_page = ids[Math.floor(Math.random() * ids.length)].href
+
+        client.get random_page, (err, req, res, obj) ->
+          response.send err or obj
     else
       res.send new restify.NotFoundError "cannot find the last page of ids"
 

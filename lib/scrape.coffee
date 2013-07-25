@@ -3,13 +3,13 @@
  the museum's server config
 ###
 
-request = require 'request'
 restify = require 'restify'
 
 scrape = (url, cb) ->
-  request url, (err, response, body) ->
+  client = restify.createStringClient {url}
+  client.get url, (err, req, res, body) ->
     # The museum website redirects the user instead of doing a 404
-    if response.request.redirects.length
+    if res.statusCode is 302
       cb new restify.NotFoundError "#{url} not found"
     else
       cb err, body

@@ -6,11 +6,10 @@
 
   for example:
 
-    request = require 'request'
     parseids = require 'lib/parsers/ids'
 
-    request 'http://metmuseum.org/search-the-collections/3', (error, response, body) ->
-      parseids 3, '<img class="object-image" href="metmuseum.org/blah.jpg" />', (err, ids) ->
+    http.get 'http://metmuseum.org/search-the-collections/3', (response) ->
+      parseids 3, response, (err, ids) ->
         console.log err or ids
 ###
 

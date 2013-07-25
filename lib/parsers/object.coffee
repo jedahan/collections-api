@@ -6,11 +6,10 @@
 
   for example:
 
-    request = require 'request'
     parseobject = require 'lib/parsers/objects'
 
-    request 'http://metmuseum.org/collections/190022757', (error, response, body) ->
-      parseobject 190022757, body, (err, obj) ->
+    http.get 'http://metmuseum.org/collections/190022757', (response) ->
+      parseids 190022757, response, (err, obj) ->
         console.log err or obj
 ###
 
