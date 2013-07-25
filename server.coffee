@@ -53,7 +53,7 @@ getRandomObject = (req, res, next) ->
 
       client.get "/ids?page=#{random_page}"+images, (err, req, res, obj) ->
         ids = obj.collection.items
-        console.log random_page = ids[Math.floor(Math.random() * ids.length)].href
+        random_page = ids[Math.floor(Math.random() * ids.length)].href
 
         client.get random_page, (err, req, res, obj) ->
           response.send err or obj
