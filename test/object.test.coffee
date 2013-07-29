@@ -16,10 +16,6 @@ APIeasy.describe('collections api')
     .expect('should return a body', (err, res, body) ->
       expect(body).to.exist
     )
-    .expect('the id to be what we asked for', (err, res, body) ->
-      id = JSON.parse(body).id
-      expect(id).to.equal 190022757
-    )
   .undiscuss()
   .discuss('that has a poorly-formed date')
   .get('/object/120006429')
