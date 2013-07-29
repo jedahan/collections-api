@@ -17,7 +17,7 @@ _getSomething = (req, url, parser, cb) ->
     if err
       cb err, body
     else
-      parser req.params.page or req.params.id, body, (err, result) ->
+      parser body, (err, result) ->
         if err
           cb err, result
         else

@@ -1,15 +1,14 @@
 ###
-  The id parser takes a page number and html, and returns an error and id object
-  the page number can be an int or string (int preferred), and is used for hyperlinking
-  the html body must be a string, where the ids are extracted
-  the callback passes an error (404 not found), or parsed id object
+  The id parser takes html, and returns an error and id object
+  the html body must be a string
+  the callback passes an error or parsed id object
 
   for example:
 
     parseids = require 'lib/parsers/ids'
 
     http.get 'http://metmuseum.org/search-the-collections/3', (response) ->
-      parseids 3, response, (err, ids) ->
+      parseids response, (err, ids) ->
         console.log err or ids
 ###
 
@@ -18,15 +17,14 @@ _ = require '../util'
 
 hostname = require('os').hostname()
 
-parseIds = (page, body, cb) ->
-  throw new Error "[parseIds] missing page" unless page? # TODO: extract page from body
+parseIds = (body, cb) ->
   throw new Error "[parseIds] missing body" unless body?
   throw new Error "[parseIds] missing callback" unless cb?
 
-  page = + page
-  id_path = "http://#{hostname}/ids?page="
   $ = cheerio.load body
-
+  page = + /[0-9]+/.exec($('.pagination .hide-content+span').text())
+  id_path = "http://#{hostname}/ids?page="
+  
   if $('.object-image').length is 0
     cb new restify.NotFoundError
   else

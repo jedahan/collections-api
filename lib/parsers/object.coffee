@@ -1,28 +1,28 @@
 ###
-  The object parser takes an object id and html, and returns an error and id object
-  the object id should be an integer, but can take a string
+  The object parser takes html, and returns an error and id object
   the html body must be a string
-  the callback passes an error, or parsed object object
+  the callback passes an error or parsed object object
 
   for example:
 
     parseobject = require 'lib/parsers/objects'
 
     http.get 'http://metmuseum.org/collections/190022757', (response) ->
-      parseids 190022757, response, (err, obj) ->
+      parseids response, (err, obj) ->
         console.log err or obj
 ###
 
 cheerio = require 'cheerio'
 _ = require '../util'
 
-parseObject = (id, body, cb) ->
+parseObject = (body, cb) ->
   throw new Error "missing body" unless body?
   throw new Error "missing callback" unless cb?
-  throw new Error "missing id" unless id? # TODO: extract id from body
 
   $ = cheerio.load body
   object = {}
+  object['title'] = $('.art-object .first h2').text() or null
+  object['id'] = + $('.artObjectZoomId').text() or null
 
   # Add all definition lists as properties
   object[_.process $($('dt')[i]).text()] = _.process $(v).text() for v,i in $('dd')
