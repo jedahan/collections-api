@@ -1,8 +1,3 @@
 .DS_Store
-./*js
-test/*js
-*json
-*log
+credentials.json
 node_modules
-dump.rdb
-tmp
