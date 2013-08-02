@@ -9,15 +9,15 @@ cache.auth redis_url.auth.split(":")[1] if redis_url.auth?
 cache.on 'error', (err) -> console.error err
 
 check = (req, res, next) ->
-    if req.method is 'GET'
-      cache.get req.getPath(), (err, reply) ->
-        console.error err if err?
-        if reply?
-          res.send JSON.parse reply
-        else
-          next()
-    else
-      next()
+  if req.method is 'GET'
+    cache.get req.getPath(), (err, reply) ->
+      console.error err if err?
+      if reply?
+        res.send JSON.parse reply
+      else
+        next()
+  else
+    next()
 
 set = cache.set
 
