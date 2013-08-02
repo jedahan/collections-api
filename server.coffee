@@ -23,7 +23,7 @@ _getSomething = (req, url, parser, cb) ->
         else
           result['_links'].self = href: req.getHref()
           result['_links'].source = href: url
-          cache.set req.getPath(), JSON.stringify(result), console.log if cache?
+          cache.redis.set req.getPath(), JSON.stringify(result) if cache?
           cb null, result
 
 getIds = (req, res, next) ->
