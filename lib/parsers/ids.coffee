@@ -27,7 +27,7 @@ parseIds = (body, cb) ->
     id_path = "http://#{hostname}/ids?page="
 
     items = (href: _.a_to_a($(a)) for a in $('.object-image'))
-    ids = collection: href: "#{id_path}#{page}", items
+    ids = collection: {href: "#{id_path}#{page}", items}
 
     last_link = $('#phcontent_0_phfullwidthcontent_0_ObjectListPagination_rptPagination_paginationLineItem_10 > a')
     last_page = /pg=(\d+)/.exec(last_link?.attr('href'))?[1]
