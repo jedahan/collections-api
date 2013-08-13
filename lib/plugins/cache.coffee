@@ -14,6 +14,7 @@ check = ->
       cache.get req.getPath(), (err, reply) ->
         console.error err if err?
         if reply?
+          res.charSet 'UTF-8'
           res.send JSON.parse reply
         else
           next()
