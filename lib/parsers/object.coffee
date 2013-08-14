@@ -18,6 +18,7 @@ _ = require '../util'
 parseObject = (body, cb) ->
   throw new Error "missing body" unless body?
   throw new Error "missing callback" unless cb?
+  cb new restify.NotFoundError "#{id} not found" unless $('.artObjectZoomId').text()?
 
   $ = cheerio.load body
   object = {}
