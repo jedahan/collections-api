@@ -34,6 +34,9 @@ getIds = (req, res, next) ->
   url = "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}"
   url += "&ao=on" if req.params.images?[0] is 't'
   _getSomething req, url, parseIds, (err, result) ->
+    for rel,link of result._links
+      if rel in ["first", "last", "next", "prev"]
+        link.href += "&images=#{req.params.images}"
     res.charSet 'UTF-8'
     res.send err or result
 
