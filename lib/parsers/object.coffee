@@ -30,7 +30,8 @@ parseObject = (body, cb) ->
     # Add all definition lists as properties
     properties = {}
     properties[_.process($($('dt')[i]).text()).toLowerCase()] = _.process $(v).text() for v,i in $('dd')
-    object[property] = properties[property] for property in ['who', 'what', 'when', 'where'] when properties[property]?
+    propertylist = ['who', 'what','when','where','date','culture','medium','dimensions','credit line','accession number']
+    object[property] = properties[property] for property in propertylist when properties[property]?
 
     # make sure 'where' always returns an array
     object['where'] = [object['where']] if typeof(object['where']) is 'string'
