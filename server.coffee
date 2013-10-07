@@ -21,18 +21,18 @@ _getSomething = (req, url, parser, cb) ->
         if err
           cb err, result
         else
-          result['_links'].self = href: req.getHref()
+          result['_links'].self = href: 'http://'+req.headers.host+req.getHref()
           result['_links'].source = href: url
           # Only cache objects
           cache.redis.set req.getPath(), JSON.stringify(result) if cache? and /object/.test(req.getPath())
           cb null, result
 
 getIds = (req, res, next) ->
-  req.params.images ?= false
-  req.params.page ?= 1
-  req.params.query ?= '*'
-  url = "#{scrape_url}?rpp=60&pg=#{req.params.page}&ft=#{req.params.query}"
-  url += "&ao=on" if req.params.images?[0] is 't'
+  images = req.params.images or ''
+  query = req.params.query or '*'
+  page = req.params.page or 1
+  url = "#{scrape_url}?rpp=60&pg=#{page}&ft=#{query}"
+  url += "&ao=on" if images?[0] is 't'
   _getSomething req, url, parseIds, (err, result) ->
     for rel,link of result._links
       if rel in ["first", "last", "next", "prev"]
