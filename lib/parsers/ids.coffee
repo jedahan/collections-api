@@ -27,14 +27,15 @@ parseIds = (body, cb) ->
     items = (href: _.a_to_a($(a)) for a in $('.object-image'))
     ids = collection: {href: "#{id_path}#{page}", items}
 
-    last_link = $('#phcontent_0_phfullwidthcontent_0_ObjectListPagination_rptPagination_paginationLineItem_10 > a')
-    last_page = /pg=(\d+)/.exec(last_link?.attr('href'))?[1]
+    prev_id = /pg=(\d+)/.exec($('.prev a')?.attr('href'))?[1]
+    next_id = /pg=(\d+)/.exec($('.next a')?.attr('href'))?[1]
+    last_id = /pg=(\d+)/.exec($('.pagination li:last-child a')?.attr('href'))?[1]
 
     ids['_links'] =
       first: href: id_path + 1
-      next: href: id_path + page+1     unless page is last_page
-      prev: href: id_path + page-1     unless page is 1
-      last: href: id_path + last_page  if last_page?
+      next: href: id_path + next_id if next_id?
+      prev: href: id_path + prev_id if prev_id?
+      last: href: id_path + last_id if last_id?
 
     cb null, ids
   else
