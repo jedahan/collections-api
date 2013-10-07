@@ -36,7 +36,9 @@ getIds = (req, res, next) ->
   _getSomething req, url, parseIds, (err, result) ->
     for rel,link of result._links
       if rel in ["first", "last", "next", "prev"]
-        link?.href += "&images=#{req.params.images}"
+        link?.href = 'http://' + req.headers.host + link?.href
+        link?.href += "&images=#{images}" if images isnt ''
+        link?.href += "&query=#{query}" if query isnt '*'
     res.charSet 'UTF-8'
     res.send err or result
 

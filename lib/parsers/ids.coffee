@@ -15,8 +15,6 @@
 cheerio = require 'cheerio'
 _ = require '../util'
 
-hostname = require('os').hostname()
-
 parseIds = (body, cb) ->
   throw new Error "[parseIds] missing body" unless body?
   throw new Error "[parseIds] missing callback" unless cb?
@@ -24,7 +22,7 @@ parseIds = (body, cb) ->
   $ = cheerio.load body
   
   if page = + /\d+/.exec($('.pagination .hide-content+span').text())
-    id_path = "http://#{hostname}/ids?page="
+    id_path = "/ids?page="
 
     items = (href: _.a_to_a($(a)) for a in $('.object-image'))
     ids = collection: {href: "#{id_path}#{page}", items}
