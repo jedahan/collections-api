@@ -31,6 +31,9 @@ getIds = (req, res, next) ->
   images = req.params.images or ''
   query = req.params.query or '*'
   page = req.params.page or 1
+  # add the page parameter in case it doesn't exist
+  req.url += (req.params.length and "&page=1" or "?page=1") unless req.params.page
+
   url = "#{scrape_url}?rpp=60&pg=#{page}&ft=#{query}"
   url += "&ao=on" if images?[0] is 't'
   _getSomething req, url, parseIds, (err, result) ->
