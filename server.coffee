@@ -44,7 +44,7 @@ getIds = (req, res, next) ->
         if rel in ["first", "last", "next", "prev"]
           link?.href = 'http://'+req.headers.host + req.url.replace /page=\d+/,"page=#{link?.href}"
       res.charSet 'UTF-8'
-    res.send result
+      res.send result
 
 getObject = (req, res, next) ->
   url = "#{scrape_url}/#{req.params.id}"
