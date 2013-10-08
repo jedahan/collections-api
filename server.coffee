@@ -34,13 +34,14 @@ getIds = (req, res, next) ->
   url = "#{scrape_url}?rpp=60&pg=#{page}&ft=#{query}"
   url += "&ao=on" if images?[0] is 't'
   _getSomething req, url, parseIds, (err, result) ->
-    for rel,link of result._links
-      if rel in ["first", "last", "next", "prev"]
-        link?.href = 'http://' + req.headers.host + link?.href
-        link?.href += "&images=#{images}" if images isnt ''
-        link?.href += "&query=#{query}" if query isnt '*'
-    res.charSet 'UTF-8'
-    res.send err or result
+    if err
+      res.send err
+    else
+      for rel,link of result._links
+        if rel in ["first", "last", "next", "prev"]
+          link?.href = req.url.replace /page=\d+/,"page=#{link}"
+      res.charSet 'UTF-8'
+    res.send result
 
 getObject = (req, res, next) ->
   url = "#{scrape_url}/#{req.params.id}"
