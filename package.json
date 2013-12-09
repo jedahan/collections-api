@@ -8,15 +8,15 @@
 , "dependencies":
   { "cheerio": "0.12.x"
   , "coffee-script": "1.6.x"
-  , "node-dev": "2.0.x"
-  , "redis": "0.8.x"
+  , "node-dev": "2.1.x"
+  , "redis": "0.9.x"
   , "restify": "2.6.x"
   , "swagger-doc": "0.2.x"
   , "toobusy": "0.2.x"
   }
 , "devDependencies":
   { "api-easy": "0.3.x"
-  , "chai": "1.7.x"
+  , "chai": "1.8.x"
   , "coffee-script": "1.6.x"
   }
 , "engines": {
