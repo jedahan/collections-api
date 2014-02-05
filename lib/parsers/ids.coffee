@@ -32,9 +32,9 @@ parseIds = (body, cb) ->
 
     ids['_links'] =
       first: href: 1
-      next: href: next_id if next_id?
-      prev: href: prev_id if prev_id?
-      last: href: last_id if last_id?
+      next: href: if next_id? then next_id
+      prev: href: if prev_id? then prev_id
+      last: href: if prev_id? then last_id
 
     cb null, ids
   else
