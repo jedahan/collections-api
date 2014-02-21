@@ -30,7 +30,7 @@ parseObject = (body, cb) ->
     # Add all definition lists as properties
     properties = {}
     properties[_.process($($('dt')[i]).text()).toLowerCase()] = _.process $(v).text() for v,i in $('dd')
-    propertylist = ['who', 'what','when','where','date','culture','medium','dimensions','credit line','accession number']
+    propertylist = ['who', 'what','when','where','date','culture','medium','dimensions','credit line','accession number','in the museum']
     object[property] = properties[property] for property in propertylist when properties[property]?
 
     # make sure 'where' always returns an array
@@ -38,6 +38,11 @@ parseObject = (body, cb) ->
     object['gallery-id'] = _.a_to_id($('.gallery-id a')) or null
     object['image'] = $('a[name="art-object-fullscreen"] > img').attr('src')?.match(/(^http.*)/)?[0]?.replace('web-large','original')
     object['related-images'] = ($(img).attr('src')?.replace('web-additional','original') for img in $('.tab-content.visible .object img') when $(img).attr('src').match(/images.metmuseum.org/)) or null
+
+    # make sure 'in the museum' gets renamed as 'department'
+    if object['in the museum']
+        object['department'] = object['in the museum']
+        delete object['in the museum']
 
     # add description and provenance
     $('.promo-accordion > li').each (i, e) ->
