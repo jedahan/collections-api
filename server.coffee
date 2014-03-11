@@ -24,7 +24,7 @@ _getSomething = (req, url, parser, cb) ->
           result['_links'].self = href: 'http://'+req.headers.host+req.getHref()
           result['_links'].source = href: url
           # Cache all objects
-          cache.redis.set req.getPath(), JSON.stringify(result) if cache? and /object/.test(req.getPath())
+          cache.redis.set req.getPath(), JSON.stringify(result) if cache? and /object/.test(req.getPath()) and result.id?
           cb null, result
 
 getIds = (req, res, next) ->
