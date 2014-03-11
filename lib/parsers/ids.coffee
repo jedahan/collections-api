@@ -26,15 +26,18 @@ parseIds = (body, cb) ->
     items = (href: _.a_to_a($(a)) for a in $('.object-image'))
     ids = collection: {items}
 
-    prev_id = /pg=(\d+)/.exec($('.prev a')?.attr('href'))?[1]
-    next_id = /pg=(\d+)/.exec($('.next a')?.attr('href'))?[1]
-    last_id = /pg=(\d+)/.exec($('.pagination li:last-child a')?.attr('href'))?[1]
+    get_id = (selector) -> /pg=(\d+)/.exec($(selector)?[0]?.attribs?.href)?[1]
+    [prev, next, last] = (get_id sel for sel in ['.prev a', '.next a', '.pagination li:last-child a'])
 
     ids['_links'] =
       first: href: 1
-      next: href: if next_id? then next_id
-      prev: href: if prev_id? then prev_id
-      last: href: if prev_id? then last_id
+      next: href: next
+      prev: href: prev
+      last: href: last
+
+    for link,href of ids['_links']
+      if /undefined/.test href.href
+        delete ids['_links'][link]
 
     cb null, ids
   else
