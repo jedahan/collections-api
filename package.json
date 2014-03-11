@@ -8,22 +8,22 @@
 , "author": "Jonathan Dahan <jonathan@jedahan.com>"
 , "keywords": ["scrape", "api", "museum"]
 , "dependencies":
-  { "cheerio": "0.13.x"
-  , "coffee-script": "1.7.x"
-  , "node-dev": "2.1.x"
-  , "redis": "0.10.x"
-  , "restify": "2.6.x"
-  , "swagger-doc": "0.2.x"
-  , "toobusy": "0.2.x"
+  { "cheerio": "~0.13.1"
+  , "coffee-script": "^1.7.1"
+  , "node-dev": "^2.1.6"
+  , "redis": "~0.10.1"
+  , "restify": "^2.6.3"
+  , "swagger-doc": "~0.2.0"
+  , "toobusy": "~0.2.4"
   }
 , "devDependencies":
-  { "api-easy": "0.3.x"
-  , "chai": "1.9.x"
-  , "coffee-script": "1.7.x"
+  { "api-easy": "~0.3.8"
+  , "chai": "^1.9.0"
+  , "coffee-script": "^1.7.1"
   }
 , "engines": {
-    "node": "0.10.x",
-    "npm":  "1.2.x"
+    "node": "~0.10.26",
+    "npm":  "^1.4.3"
   }
 , "scripts":
   { "start": "coffee server.coffee"
