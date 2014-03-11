@@ -59,7 +59,7 @@ getRandomObject = (req, res, next) ->
 
   client.get "/ids?"+images, (err, req, res, obj) ->
     if max = obj._links?.last?.href
-      random_page = Math.floor(Math.random() * /\d+/.exec(max)) + 1
+      random_page = Math.floor(Math.random() * +(/page=(\d+)/.exec(max)[1])) + 1
 
       client.get "/ids?page=#{random_page}&"+images, (err, req, res, obj) ->
         ids = obj.collection.items
