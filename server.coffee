@@ -32,9 +32,11 @@ getIds = (req, res, next) ->
   # add default params
   page = req.params.page or 1
   query = req.params.query or '*'
-
-  url = "#{scrape_url}?rpp=60&pg=#{page}&ft=#{query}"
-  url += "&ao=on" if req.params.images?[0] is 't'
+  if req.params.featured?
+    url = "http://www.metmuseum.org/collections/browse-highlights?rpp=50&pg=#{page}&ft=#{query}"
+  else
+    url = "#{scrape_url}?rpp=60&pg=#{page}&ft=#{query}"
+    url += "&ao=on" if req.params.images?[0] is 't'
   _getSomething req, url, parseIds, (err, result) ->
     if err
       res.send err
@@ -137,7 +139,11 @@ docs.get "/ids", "Gets a list of ids (60 per request) found in the collection",
     required: false, dataType: 'int'
     paramType: 'query' },
     { name: 'images'
-    description: 'Only list objects that have images?'
+    description: 'Only list objects that have images'
+    required: false, dataType: 'boolean'
+    paramType: 'query' },
+    { name: 'featured'
+    description: 'Only list featured objects'
     required: false, dataType: 'boolean'
     paramType: 'query' }
   ]
