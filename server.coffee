@@ -21,28 +21,28 @@ _getSomething = (req, url, parser, cb) ->
         if err
           cb err, result
         else
-          result['_links'].self = href: 'http://'+req.headers.host+req.getHref()
+          result['_links'].self = href: 'http://' + req.headers.host + req.getHref()
           result['_links'].source = href: url
-          # Cache all objects
-          cache.redis.set req.getPath(), JSON.stringify(result) if cache? and /object/.test(req.getPath()) and result.id?
+          # Cache objects
+          if result.id? and cache? and /object/.test(req.getPath())
+            cache.redis.set req.getPath(), JSON.stringify(result)
           cb null, result
 
 getIds = (req, res, next) ->
-  images = req.params.images or ''
-  query = req.params.query or '*'
+  # add default params
   page = req.params.page or 1
-  # add the page parameter in case it doesn't exist
-  req.url += (req.params.length and "&page=1" or "?page=1") unless req.params.page
+  query = req.params.query or '*'
 
   url = "#{scrape_url}?rpp=60&pg=#{page}&ft=#{query}"
-  url += "&ao=on" if images?[0] is 't'
+  url += "&ao=on" if req.params.images?[0] is 't'
   _getSomething req, url, parseIds, (err, result) ->
     if err
       res.send err
     else
       for rel,link of result._links
         if rel in ["first", "last", "next", "prev"]
-          link?.href = 'http://'+req.headers.host + req.url.replace /page=\d+/,"page=#{link?.href}"
+          link?.href = "http://#{req.headers.host}" +
+            req.url.replace /page=\d+/, "page=#{link?.href}"
       res.charSet 'UTF-8'
       res.send result
 
@@ -57,18 +57,18 @@ getRandomObject = (req, res, next) ->
   images = if req.params.images?[0] is 't' then "images=true" else ""
   response = res
 
-  client.get "/ids?"+images, (err, req, res, obj) ->
+  client.get "/ids?" + images, (err, req, res, obj) ->
     if max = obj._links?.last?.href
       random_page = Math.floor(Math.random() * +(/page=(\d+)/.exec(max)[1])) + 1
 
-      client.get "/ids?page=#{random_page}&"+images, (err, req, res, obj) ->
+      client.get "/ids?page=#{random_page}&" + images, (err, req, res, obj) ->
         ids = obj.collection.items
         random_page = ids[Math.floor(Math.random() * ids.length)].href
 
         client.get random_page, (err, req, res, obj) ->
           response.send err or obj
     else
-      res.send new restify.NotFoundError "cannot find the last page of ids"
+      res.send new restify.NotFoundError("cannot find the last page of ids")
 
 ###
   Server Options
@@ -105,13 +105,21 @@ docs = swagger.createResource '/docs'
 docs.get "/random", "Gets information about a random object in the collection",
   nickname: "getRandomObject"
   parameters: [
-    { name: 'images', description: 'Only list objects that have images?', required: false, dataType: 'boolean', paramType: 'query' }
+    name: 'images'
+    description: 'Only list objects that have images?'
+    required: false
+    dataType: 'boolean'
+    paramType: 'query'
   ]
 
 docs.get "/object/{id}", "Gets information about a specific object in the collection",
   nickname: "getObject"
   parameters: [
-    { name: 'id', description: 'Object id as seen on collections url', required: true, dataType: 'int', paramType: 'path' }
+    name: 'id'
+    description: 'Object id as seen on collections url'
+    required: true
+    dataType: 'int'
+    paramType: 'path'
   ]
   errorResponses: [
     { code: 404, reason: "Object not found" }
@@ -120,9 +128,18 @@ docs.get "/object/{id}", "Gets information about a specific object in the collec
 docs.get "/ids", "Gets a list of ids (60 per request) found in the collection",
   nickname: "getIds"
   parameters: [
-    { name: 'query', description: 'search terms if any', required: false, dataType: 'string', paramType: 'query' }
-    { name: 'page', description: 'page to return of results', required: false, dataType: 'int', paramType: 'query' }
-    { name: 'images', description: 'Only list objects that have images?', required: false, dataType: 'boolean', paramType: 'query' }
+    { name: 'query'
+    description: 'search terms if any'
+    required: false, dataType: 'string'
+    paramType: 'query' },
+    { name: 'page'
+    description: 'page to return of results'
+    required: false, dataType: 'int'
+    paramType: 'query' },
+    { name: 'images'
+    description: 'Only list objects that have images?'
+    required: false, dataType: 'boolean'
+    paramType: 'query' }
   ]
 
 ###
