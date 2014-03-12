@@ -10,10 +10,10 @@ scrape = (url, cb) ->
   client.get url, (err, req, res, body) ->
     # The museum website redirects the user to / instead of doing a 404
     if res.statusCode is 302
-        unless /\d+/.test res.headers.location
-            cb new restify.NotFoundError "#{url} not found"
-        client.get res.headers.location, (err, req, res, body) ->
-            cb err, body
+      if /\d+/.test res.headers.location
+        client.get res.headers.location, (err, req, res, body) -> cb err, body
+      else
+        cb new restify.NotFoundError "#{url} not found"
     else
       cb err, body
 
