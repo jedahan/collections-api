@@ -21,7 +21,7 @@ parseIds = (body, cb) ->
   throw new Error "[parseIds] missing callback" unless cb?
 
   $ = cheerio.load body
-  
+
   if $('.artefact-listing li').length
     items = (href: _.a_to_a($(a)) for a in $('.object-image'))
     ids = collection: {items}

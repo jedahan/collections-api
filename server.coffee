@@ -70,7 +70,7 @@ getRandomObject = (req, res, next) ->
         client.get random_page, (err, req, res, obj) ->
           response.send err or obj
     else
-      res.send new restify.NotFoundError("cannot find the last page of ids")
+      res.send new restify.NotFoundError "cannot find the last page of ids"
 
 ###
   Server Options
