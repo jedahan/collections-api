@@ -1,1 +1,1 @@
-web: `npm bin`/coffee --nodejs --harmony server.coffee
+web: node_modules/.bin/coffee --nodejs --harmony server.coffee
