@@ -6,12 +6,6 @@ Please submit all questions, bugs and feature requests to [the issue page](https
 
 Dedicated to the memory of [Aaron Swartz](http://en.wikipedia.org/wiki/Aaron_Swartz).
 
-#### Setup
-
-The API requires [node.js](http://nodejs.org), and is built on [koa](koajs.com)
-
-Node comes with npm, so `npm install` to grab all the dependencies, and `npm start` to start the server.
-
 #### Usage
 
 Right now the only endpoint is `/object/:id`, and the server listens on port 5000, so try `curl localhost:5000/object/1234` to see the possible response.
@@ -45,6 +39,11 @@ The syntax to filter out fields is loosely based on XPath:
 
 The code is [CC0](http://creativecommons.org/publicdomain/zero/1.0), but if you do anything interesting with the data, it would be nice to give attribution to The Metropolitan Museum of Art. If you do anything interesting with the code, it would be nice to give attribution and contribute back any modifications or improvements.
 
-#### Deployment
+
+#### Installation and Deployment
+
+The API requires [node.js](http://nodejs.org), and is built on [koa](koajs.com)
+
+Node comes with npm, so `npm install` to grab all the dependencies, and `npm start` (or `foreman start`) to start the server.
 
 To deploy, install [deliver](https://github.com/gerhard/deliver), edit `.deliver/config`, and run `deliver`. This has been tested on 10.9.
