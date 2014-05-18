@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-APP="collections-api"
+APP="scrapi"
 HOSTS="scrapi.org"
 PORT="80"
 STRATEGY="nodejs"
-SUPERVISOR="smf"
