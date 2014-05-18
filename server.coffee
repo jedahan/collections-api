@@ -1,5 +1,5 @@
-Q = require 'q'
-request = Q.denodeify require 'request'
+q = require 'q'
+request = q.denodeify require 'request'
 
 firstCharLowerCase = (str) -> str.charAt(0).toLowerCase() + str.slice(1)
 
@@ -10,7 +10,7 @@ parser = new xml2js.Parser(
   trim: true
   tagNameProcessors: [ firstCharLowerCase ]
 )
-parseString = Q.denodeify parser.parseString
+parseString = q.denodeify parser.parseString
 
 koa = require 'koa'
 router = require 'koa-router'
