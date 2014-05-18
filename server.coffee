@@ -16,6 +16,7 @@ parseString = q.denodeify parser.parseString
 koa = require 'koa'
 router = require 'koa-router'
 response_time = require 'koa-response-time'
+mask = require 'koa-json-mask'
 
 api = "http://www.metmuseum.org/collection/the-collection-online/search/"
 
@@ -28,8 +29,9 @@ getObject = (next) -->
   @body = object
 
 app = koa()
-app.use(response_time())
-app.use(router(app))
+app.use response_time()
+app.use mask()
+app.use router(app)
 app.get '/object/:id', getObject
 
 app.listen process.env.PORT or 5000, ->
