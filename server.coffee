@@ -6,9 +6,9 @@ firstCharLowerCase = (str) ->
 
 xml2js = require 'xml2js'
 parser = new xml2js.Parser(
-  normalize: true
-  firstCharLowerCase: true
   trim: true
+  explicitArray: false
+  explicitRoot: false
   tagNameProcessors: [ firstCharLowerCase ]
 )
 parseString = q.denodeify parser.parseString
@@ -21,8 +21,7 @@ api = "http://www.metmuseum.org/collection/the-collection-online/search/"
 
 getObject = (next) -->
   xml = yield request api+@params['id']+'?xml=1'
-  json = yield parseString xml[0].body
-  object = json.collectionArtObjectXMLModel
+  object = yield parseString xml[0].body
   delete object['$']
   for key, value of object when value.length is 1
     object[key] = value[0]
