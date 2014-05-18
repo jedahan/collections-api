@@ -35,4 +35,4 @@ app.use(router(app))
 app.get '/object/:id', getObject
 
 app.listen process.env.PORT or 5000, ->
-  console.log "[%s] listening", process.pid
+  console.log "[#{process.pid}] listening on port #{+@_connectionKey.split(':')[2]}"
