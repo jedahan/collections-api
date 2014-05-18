@@ -30,6 +30,8 @@ $ curl 'localhost:5000/object/123?fields=title,whoList/who/name'
 }
 ```
 
+I recommend `fields=title,primaryArtistNameOnly,primaryImageUrl,medium,whatList/what/name,whenList/when/name,whereList/where/name,whoList/who/name`
+
 ##### fields syntax
 
 The syntax to filter out fields is loosely based on XPath:
