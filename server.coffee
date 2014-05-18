@@ -44,7 +44,7 @@ app.use router(app)
 app.get '/', markdown({
   baseUrl: '/'
   root: __dirname
-  indexName: 'readme'
+  indexName: 'Readme'
 })
 app.get '/object/:id', getObject
 
