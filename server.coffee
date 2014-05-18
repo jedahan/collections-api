@@ -17,6 +17,10 @@ koa = require 'koa'
 router = require 'koa-router'
 response_time = require 'koa-response-time'
 mask = require 'koa-json-mask'
+compress = require 'koa-compress'
+etag = require 'koa-etag'
+fresh = require 'koa-fresh'
+logger = require 'koa-logger'
 
 api = "http://www.metmuseum.org/collection/the-collection-online/search/"
 
@@ -30,6 +34,10 @@ getObject = (next) -->
 
 app = koa()
 app.use response_time()
+app.use logger()
+app.use etag()
+app.use fresh()
+app.use compress()
 app.use mask()
 app.use router(app)
 app.get '/object/:id', getObject
