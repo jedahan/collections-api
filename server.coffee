@@ -21,6 +21,7 @@ compress = require 'koa-compress'
 etag = require 'koa-etag'
 fresh = require 'koa-fresh'
 logger = require 'koa-logger'
+markdown = require 'koa-markdown'
 
 api = "http://www.metmuseum.org/collection/the-collection-online/search/"
 
@@ -40,6 +41,11 @@ app.use fresh()
 app.use compress()
 app.use mask()
 app.use router(app)
+app.get '/', markdown({
+  baseUrl: '/'
+  root: __dirname
+  indexName: 'readme'
+})
 app.get '/object/:id', getObject
 
 app.listen process.env.PORT or 5000, ->
