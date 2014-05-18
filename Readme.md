@@ -1,6 +1,6 @@
-Here is a [CC0](http://creativecommons.org/publicdomain/zero/1.0) api built by scraping the metropolitan museum's [collections](http://www.metmuseum.org/collections) website.
+## scrapi, a metropolitan museum collections api
 
-A live instance is available on [scrAPI.org](http://scrAPI.org)
+[scrAPI.org](scrapi.org) is a [CC0](http://creativecommons.org/publicdomain/zero/1.0) api built by scraping the metropolitan museum's [collections](metmuseum.org/collection) website.
 
 Please submit all questions, bugs and feature requests to [the issue page](https://github.com/jedahan/collections-api/issues).
 
