@@ -23,10 +23,8 @@ getObject = (next) -->
   xml = yield request api+@params['id']+'?xml=1'
   object = yield parseString xml[0].body
   delete object['$']
-  for key, value of object when value.length is 1
-    object[key] = value[0]
-    if object[key] is '' then delete object[key]
-
+  delete object[key] for key, value of object when value is ""
+  object[key] = +value for key, value of object when not isNaN(+value)
   @body = object
 
 app = koa()
