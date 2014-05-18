@@ -1,7 +1,8 @@
 q = require 'q'
 request = q.denodeify require 'request'
 
-firstCharLowerCase = (str) -> str.charAt(0).toLowerCase() + str.slice(1)
+firstCharLowerCase = (str) ->
+  if /^[A-Z]+$/.test str then str else str.charAt(0).toLowerCase() + str.slice(1)
 
 xml2js = require 'xml2js'
 parser = new xml2js.Parser(
