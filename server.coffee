@@ -13,25 +13,33 @@ parser = new xml2js.Parser(
 )
 parseString = q.denodeify parser.parseString
 
-koa = require 'koa'
-router = require 'koa-router'
-response_time = require 'koa-response-time'
-mask = require 'koa-json-mask'
-compress = require 'koa-compress'
-etag = require 'koa-etag'
-fresh = require 'koa-fresh'
-logger = require 'koa-logger'
-markdown = require 'koa-markdown'
-
 api = "http://www.metmuseum.org/collection/the-collection-online/search/"
+
+traverse = require 'traverse'
 
 getObject = (next) -->
   xml = yield request api+@params['id']+'?xml=1'
   object = yield parseString xml[0].body
   delete object['$']
-  delete object[key] for key, value of object when value is ""
-  object[key] = +value for key, value of object when not isNaN(+value)
+  traverse(object).forEach (e) ->
+    switch e
+      when "" then @remove
+      when "false" then false
+      when "true" then true
+      else
+        unless isNaN +e then +e
+
   @body = object
+
+koa = require 'koa'
+response_time = require 'koa-response-time'
+logger = require 'koa-logger'
+etag = require 'koa-etag'
+fresh = require 'koa-fresh'
+compress = require 'koa-compress'
+mask = require 'koa-json-mask'
+router = require 'koa-router'
+markdown = require 'koa-markdown'
 
 app = koa()
 app.use response_time()
@@ -41,11 +49,7 @@ app.use fresh()
 app.use compress()
 app.use mask()
 app.use router(app)
-app.get '/', markdown({
-  baseUrl: '/'
-  root: __dirname
-  indexName: 'Readme'
-})
+app.get '/', markdown({ baseUrl: '/', root: __dirname, indexName: 'Readme'})
 app.get '/object/:id', getObject
 
 app.listen process.env.PORT or 5000, ->
