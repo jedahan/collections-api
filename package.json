@@ -17,6 +17,7 @@
     "museum"
   ],
   "dependencies": {
+    "cheerio": "^0.16.0",
     "coffee-script": "https://github.com/xixixao/coffee-script/tarball/master",
     "koa": "^0.6.1",
     "koa-compress": "^1.0.7",
