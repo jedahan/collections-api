@@ -10,9 +10,16 @@ api = "http://www.metmuseum.org/collection/the-collection-online/search"
 
 traverse = require 'traverse'
 
+getEndpoint = (endpoint) ->
+  (next) -->
+    start = Date.now()
+    yield request api+endpoint
+    delta = Math.ceil(Date.now() - start)
+    @set 'X-Response-Time-Metmuseum', delta + 'ms'
+
 getObject = (next) -->
-  xml = yield request api+'/'+@params['id']+'?xml=1'
-  object = yield parseString xml[0].body
+  xml = yield getEndpoint "/#{@params['id']}?xml=1"
+  object = yield parseString xml
   delete object['$']
   traverse(object).forEach (e) ->
     switch e
@@ -27,12 +34,8 @@ getObject = (next) -->
 cheerio = require 'cheerio'
 
 getIds = (next) -->
-  hostname = 'scrapi.org' # FIXME: make this hostname dynamic
-  start = Date.now()
-  search = yield request api+'?rpp=90&ft='+@params['term']
-  delta = Math.ceil(Date.now() - start)
-  @set 'X-Response-Time-Metmuseum', delta + 'ms'
-  $ = cheerio.load search[0].body
+  page = yield getEndpoint "?rpp=90&ft=#{@params['term']}"
+  $ = cheerio.load page
 
   ids = collection: items: (e for e in $('.list-view-object-info').map ->
     title: $(@).find('.objtitle').text().trim()
