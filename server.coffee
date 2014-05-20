@@ -1,16 +1,9 @@
 q = require 'q'
 request = q.denodeify require 'request'
 
-firstCharLowerCase = (str) ->
-  if /^[A-Z]+$/.test str then str else str.charAt(0).toLowerCase() + str.slice(1)
-
 xml2js = require 'xml2js'
-parser = new xml2js.Parser(
-  trim: true
-  explicitArray: false
-  explicitRoot: false
-  tagNameProcessors: [ firstCharLowerCase ]
-)
+firstCharLowerCase = (str) -> if /^[A-Z]+$/.test str then str else str.charAt(0).toLowerCase() + str.slice(1)
+parser = new xml2js.Parser(trim: true, explicitArray: false, explicitRoot: false, tagNameProcessors: [ firstCharLowerCase ])
 parseString = q.denodeify parser.parseString
 
 api = "http://www.metmuseum.org/collection/the-collection-online/search"
@@ -33,12 +26,32 @@ getObject = (next) -->
 
 cheerio = require 'cheerio'
 
-getSearch = (next) -->
+getIds = (next) -->
+  hostname = 'scrapi.org' # FIXME: make this hostname dynamic
+  start = Date.now()
   search = yield request api+'?rpp=90&ft='+@params['term']
+  delta = Math.ceil(Date.now() - start)
+  @set 'X-Response-Time-Metmuseum', delta + 'ms'
   $ = cheerio.load search[0].body
-  hostname = 'scrapi.org'
-  @body = (e for e in $('.list-view-object-info > a').map ->
-    "http://#{hostname}/object/#{+($(@).attr('href')?.match(/\d+/)?[0])}")
+
+  ids = collection: items: (e for e in $('.list-view-object-info').map ->
+    title: $(@).find('.objtitle').text().trim()
+    id = + $(@).find('a').attr('href')?.match(/\d+/)?[0]
+    href: "http://#{hostname}/object/#{id}"
+  )
+  get_id = (selector) -> /pg=(\d+)/.exec($(selector)?[0]?.attribs?.href)?[1]
+
+  ids['_links'] =
+    first: href: 1
+    next: href: get_id $('.prev a')
+    prev: href: get_id $('.next a')
+    last: href: get_id $('.collection-online-pages li:not(.next) a').last()
+
+  for link,href of ids['_links']
+    if /undefined/.test href.href
+      delete ids['_links'][link]
+
+  @body = ids
 
 koa = require 'koa'
 response_time = require 'koa-response-time'
@@ -60,7 +73,7 @@ app.use mask()
 app.use router(app)
 app.get '/', markdown({ baseUrl: '/', root: __dirname, indexName: 'Readme'})
 app.get '/object/:id', getObject
-app.get '/search/:term', getSearch
+app.get '/search/:term', getIds
 
 app.listen process.env.PORT or 5000, ->
   console.log "[#{process.pid}] listening on port #{+@_connectionKey.split(':')[2]}"
