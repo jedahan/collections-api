@@ -13,12 +13,12 @@ parser = new xml2js.Parser(
 )
 parseString = q.denodeify parser.parseString
 
-api = "http://www.metmuseum.org/collection/the-collection-online/search/"
+api = "http://www.metmuseum.org/collection/the-collection-online/search"
 
 traverse = require 'traverse'
 
 getObject = (next) -->
-  xml = yield request api+@params['id']+'?xml=1'
+  xml = yield request api+'/'+@params['id']+'?xml=1'
   object = yield parseString xml[0].body
   delete object['$']
   traverse(object).forEach (e) ->
@@ -30,6 +30,15 @@ getObject = (next) -->
         unless isNaN +e then +e
 
   @body = object
+
+cheerio = require 'cheerio'
+
+getSearch = (next) -->
+  search = yield request api+'?rpp=90&ft='+@params['term']
+  $ = cheerio.load search[0].body
+  hostname = 'scrapi.org'
+  @body = (e for e in $('.list-view-object-info > a').map ->
+    "http://#{hostname}/object/#{+($(@).attr('href')?.match(/\d+/)?[0])}")
 
 koa = require 'koa'
 response_time = require 'koa-response-time'
@@ -51,6 +60,7 @@ app.use mask()
 app.use router(app)
 app.get '/', markdown({ baseUrl: '/', root: __dirname, indexName: 'Readme'})
 app.get '/object/:id', getObject
+app.get '/search/:term', getSearch
 
 app.listen process.env.PORT or 5000, ->
   console.log "[#{process.pid}] listening on port #{+@_connectionKey.split(':')[2]}"

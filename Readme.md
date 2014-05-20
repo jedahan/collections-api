@@ -36,6 +36,10 @@ The syntax to filter out fields is loosely based on XPath:
 
 I like the following fields for basic object information: `fields=title,primaryArtistNameOnly,primaryImageUrl,medium,whatList/what/name,whenList/when/name,whereList/where/name,whoList/who/name`
 
+### Object search (`/search/:term`)
+
+You can now search for terms, and get back an array of hrefs to objects
+
 ## Guidelines
 
 The code is [CC0](http://creativecommons.org/publicdomain/zero/1.0), but if you do anything interesting with the data, it would be nice to give attribution to The Metropolitan Museum of Art. If you do anything interesting with the code, it would be nice to give attribution and contribute back any modifications or improvements.
