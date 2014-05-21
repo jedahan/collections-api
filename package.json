@@ -26,6 +26,7 @@
     "koa-json-mask": "^0.1.0",
     "koa-logger": "^1.2.1",
     "koa-markdown": "0.0.3",
+    "koa-redis-cache": "0.0.7",
     "koa-response-time": "^1.0.2",
     "koa-router": "^3.1.4",
     "q": "^1.0.1",

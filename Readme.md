@@ -46,6 +46,7 @@ The code is [CC0](http://creativecommons.org/publicdomain/zero/1.0), but if you 
 
 ## Installation and Deployment
 
-The API requires [node.js](http://nodejs.org), and is built on [koa](koajs.com). Node comes with `npm`, the node package manager. Install all the libraries with `npm install`, then start the server with `npm start`.
+The API requires [node.js](http://nodejs.org), uses [redis](redis.io) for caching, and is built on the [koa](koajs.com) web framework.
+Install the required libraries with `npm install`. You can start the server and redis together with `foreman start` if you have [foreman](http://ddollar.github.io/foreman/) (recommended), or if you have some other way of having redis run, just do `npm start`.
 
 To make deployments easy, we use  [deliver](https://github.com/gerhard/deliver). Install deliver, edit `.deliver/config`, and run `deliver` to push the latest changes to a remote server. This has been tested on OSX 10.9 and Ubuntu 14.04.

@@ -7,6 +7,7 @@ compress = require 'koa-compress'
 mask = require 'koa-json-mask'
 router = require 'koa-router'
 markdown = require 'koa-markdown'
+cache = require 'koa-redis-cache'
 
 app = koa()
 app.use response_time()
@@ -17,8 +18,8 @@ app.use compress()
 app.use mask()
 app.use router(app)
 app.get '/', markdown({ baseUrl: '/', root: __dirname, indexName: 'Readme'})
-app.get '/object/:id', require './libs/getObject'
-app.get '/search/:term', require './libs/getIds'
+app.get '/object/:id', cache(expire: 60*60*24*30), require './libs/getObject'
+app.get '/search/:term', cache(expire: 60*60*24), require './libs/getIds'
 app.get '/random', require './libs/getRandom'
 
 app.listen process.env.PORT or 5000, ->
