@@ -1,6 +1,3 @@
-getObject = require 'libs/getObject'
-getIds = require 'libs/getIds'
-
 koa = require 'koa'
 response_time = require 'koa-response-time'
 logger = require 'koa-logger'
@@ -20,8 +17,9 @@ app.use compress()
 app.use mask()
 app.use router(app)
 app.get '/', markdown({ baseUrl: '/', root: __dirname, indexName: 'Readme'})
-app.get '/object/:id', getObject
-app.get '/search/:term', getIds
+app.get '/search/:term', require './libs/getRandom'
+app.get '/object/:id', require './libs/getObject'
+app.get '/search/:term', require './libs/getIds'
 
 app.listen process.env.PORT or 5000, ->
   console.log "[#{process.pid}] listening on port #{+@_connectionKey.split(':')[2]}"
