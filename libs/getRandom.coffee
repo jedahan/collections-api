@@ -1,5 +1,3 @@
-module.exports = getRandom
-
 q = require 'q'
 request = q.denodeify require 'request'
 
@@ -14,3 +12,5 @@ getRandom = (next) -->
     random_page = ids[Math.floor(Math.random() * ids.length)].href
 
     @body = yield request random_page
+
+module.exports = getRandom

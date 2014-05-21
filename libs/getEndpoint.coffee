@@ -1,5 +1,3 @@
-module.exports = getEndpoint
-
 q = require 'q'
 request = q.denodeify require 'request'
 
@@ -10,3 +8,5 @@ getEndpoint = (endpoint) ->
     return yield request api+endpoint
     delta = Math.ceil(Date.now() - start)
     @set 'X-Response-Time-Metmuseum', delta + 'ms'
+
+module.exports = getEndpoint

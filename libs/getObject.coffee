@@ -1,6 +1,4 @@
-module.exports = getObject
-
-getEndpoint = require 'libs/getEndpoint'
+getEndpoint = require './getEndpoint'
 
 traverse = require 'traverse'
 q = require 'q'
@@ -23,3 +21,5 @@ getObject = (next) -->
         unless isNaN +e then +e
 
   @body = object
+
+module.exports = getObject

@@ -1,6 +1,4 @@
-module.exports = getIds
-
-getEndpoint = require 'libs/getEndpoint'
+getEndpoint = require './getEndpoint'
 
 cheerio = require 'cheerio'
 
@@ -26,3 +24,5 @@ getIds = (next) -->
       delete ids['_links'][link]
 
   @body = ids
+
+module.exports = getIds

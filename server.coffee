@@ -17,9 +17,9 @@ app.use compress()
 app.use mask()
 app.use router(app)
 app.get '/', markdown({ baseUrl: '/', root: __dirname, indexName: 'Readme'})
-app.get '/search/:term', require './libs/getRandom'
 app.get '/object/:id', require './libs/getObject'
 app.get '/search/:term', require './libs/getIds'
+app.get '/random', require './libs/getRandom'
 
 app.listen process.env.PORT or 5000, ->
   console.log "[#{process.pid}] listening on port #{+@_connectionKey.split(':')[2]}"
