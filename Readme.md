@@ -1,18 +1,39 @@
 # scrapi, a metropolitan museum collections api
 
-[scrAPI.org](scrapi.org) is a [CC0](http://creativecommons.org/publicdomain/zero/1.0) api built by scraping the metropolitan museum's [collections](metmuseum.org/collection) website.
+[scrAPI.org](scrapi.org) is an api that grabs object information from the metropolitan museum's [collections](metmuseum.org/collection) website.
 
-Please submit all questions, bugs and feature requests to [the issue page](https://github.com/jedahan/collections-api/issues).
 
-Dedicated to the memory of [Aaron Swartz](http://en.wikipedia.org/wiki/Aaron_Swartz).
+## Object information (`/object/:id`)
 
-## Usage
+Try `curl scrapi.org/object/123` in a terminal, or just click on [object/1234](object/123)
+```bash
+$ curl 'scrapi.org/object/123'
+{
+  "CRDID": 123,
+  "accessionNumber": "64.291.2",
+  ...
+}
+```
 
-### Object information (`/object/:id`)
+## Searching for object ids (`/search/:terms`)
 
-The main endpoint for an object from the collection is `/object/:id`. Try `curl scrapi.org/object/123` in a terminal, or just click on [object/1234](object/123)
+You can now search for terms, and get back an array of hrefs to object pages
+```bash
+$ curl 'scrapi.org/search/mirror'
+{
+  "collection": {
+    "items": [
+      {
+          "href": "http://scrapi.org/object/156225"
+      },
+      {
+          "href": "http://scrapi.org/object/207785"
+      },
+      ...
+}
+```
 
-### Filtering with the `fields` parameter
+## Filtering with the `fields` parameter
 If you want to filter *any* response, use the `fields` parameter, like so:
 
 ```bash
@@ -36,13 +57,14 @@ The syntax to filter out fields is loosely based on XPath:
 
 I like the following fields for basic object information: `fields=title,primaryArtistNameOnly,primaryImageUrl,medium,whatList/what/name,whenList/when/name,whereList/where/name,whoList/who/name`
 
-### Object search (`/search/:term`)
-
-You can now search for terms, and get back an array of hrefs to objects
 
 ## Guidelines
 
 The code is [CC0](http://creativecommons.org/publicdomain/zero/1.0), but if you do anything interesting with the data, it would be nice to give attribution to The Metropolitan Museum of Art. If you do anything interesting with the code, it would be nice to give attribution and contribute back any modifications or improvements.
+
+Please submit all questions, bugs and feature requests to [the issue page](https://github.com/jedahan/collections-api/issues).
+
+Dedicated to the memory of [Aaron Swartz](http://en.wikipedia.org/wiki/Aaron_Swartz).
 
 ## Installation and Deployment
 
