@@ -1,3 +1,7 @@
+module.exports = getIds
+
+getEndpoint = require 'libs/getEndpoint'
+
 cheerio = require 'cheerio'
 
 getIds = (next) -->

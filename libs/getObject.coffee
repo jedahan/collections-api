@@ -1,7 +1,9 @@
-modules.export = getObject
+module.exports = getObject
+
+getEndpoint = require 'libs/getEndpoint'
 
 traverse = require 'traverse'
-getEndpoint = require 'libs/getEndpoint'
+q = require 'q'
 
 xml2js = require 'xml2js'
 firstCharLowerCase = (str) -> if /^[A-Z]+$/.test str then str else str.charAt(0).toLowerCase() + str.slice(1)

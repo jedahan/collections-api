@@ -1,7 +1,7 @@
+module.exports = getEndpoint
+
 q = require 'q'
 request = q.denodeify require 'request'
-
-module.exports = getEndpoint
 
 getEndpoint = (endpoint) ->
   (next) -->
