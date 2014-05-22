@@ -23,6 +23,7 @@ getIds = (next) -->
     if /undefined/.test href.href
       delete ids['_links'][link]
 
-  @body = ids
+  cleanup = require './cleanup'
+  @body = cleanup ids
 
 module.exports = getIds

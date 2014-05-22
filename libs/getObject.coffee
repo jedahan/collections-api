@@ -1,6 +1,5 @@
 getEndpoint = require './getEndpoint'
 
-traverse = require 'traverse'
 q = require 'q'
 
 xml2js = require 'xml2js'
@@ -11,15 +10,7 @@ parseString = q.denodeify parser.parseString
 getObject = (next) -->
   xml = yield getEndpoint "/#{@params['id']}?xml=1"
   object = yield parseString xml[0].body
-  delete object['$']
-  traverse(object).forEach (e) ->
-    switch e
-      when "" then @remove
-      when "false" then false
-      when "true" then true
-      else
-        unless isNaN +e then +e
-
-  @body = object
+  cleanup = require './cleanup'
+  @body = cleanup object
 
 module.exports = getObject
