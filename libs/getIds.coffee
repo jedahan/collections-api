@@ -3,7 +3,7 @@ getEndpoint = require './getEndpoint'
 cheerio = require 'cheerio'
 
 getIds = (next) -->
-  page = yield getEndpoint "?rpp=90&ft=#{@params['term'] or '*'}"
+  page = yield getEndpoint "?rpp=90&ft=#{@params['term'] or '*'}&pg=#{@query['page'] or '1'}"
   $ = cheerio.load page[0].body
 
   ids = collection: items: (e for e in $('.list-view-object-info').map ->
