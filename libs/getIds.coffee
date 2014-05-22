@@ -15,8 +15,8 @@ getIds = (next) -->
 
   ids['_links'] =
     first: href: 1
-    next: href: get_id $('.prev a')
-    prev: href: get_id $('.next a')
+    next: href: get_id $('.next a')
+    prev: href: get_id $('.prev a')
     last: href: get_id $('.collection-online-pages li:not(.next) a').last()
 
   for link,href of ids['_links']
