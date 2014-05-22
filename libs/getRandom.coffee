@@ -2,7 +2,7 @@ q = require 'q'
 request = q.denodeify require 'request'
 
 getRandom = (next) -->
-  console.log page = yield request "http://scrapi.org/search"
+  page = yield request "http://scrapi.org/search"
 
   if max = JSON.parse(page[0].body)._links?.last?.href
     random_page = Math.ceil(Math.random() * max)

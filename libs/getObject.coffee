@@ -1,4 +1,5 @@
 getEndpoint = require './getEndpoint'
+cleanup = require './cleanup'
 
 q = require 'q'
 
@@ -10,7 +11,6 @@ parseString = q.denodeify parser.parseString
 getObject = (next) -->
   xml = yield getEndpoint "/#{@params['id']}?xml=1"
   object = yield parseString xml[0].body
-  cleanup = require './cleanup'
   @body = cleanup object
 
 module.exports = getObject
