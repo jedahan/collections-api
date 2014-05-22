@@ -7,11 +7,16 @@ compress = require 'koa-compress'
 mask = require 'koa-json-mask'
 router = require 'koa-router'
 markdown = require 'koa-markdown'
-cache = require 'koa-redis-cache'
 
 getIds = require './libs/getIds'
 
 app = koa()
+
+if app.env is 'development'
+  cache = -> -->
+else
+  cache = require 'koa-redis-cache'
+
 app.use response_time()
 app.use logger()
 app.use etag()
