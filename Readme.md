@@ -1,6 +1,6 @@
 # scrapi, a metropolitan museum collections api
 
-[scrAPI.org](scrapi.org) is an api that grabs object information from the metropolitan museum's [collections](metmuseum.org/collection) website.
+[scrAPI.org](scrapi.org) is an api that grabs object information from the metropolitan museum's [collections](http://metmuseum.org/collection) website.
 
 ### Get a random object (`/random`)
 Try `curl scrapi.org/random` in a terminal, or just click on [/random](random)
