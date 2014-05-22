@@ -2,6 +2,16 @@
 
 [scrAPI.org](scrapi.org) is an api that grabs object information from the metropolitan museum's [collections](metmuseum.org/collection) website.
 
+### Get a random object (`/random`)
+Try `curl scrapi.org/random` in a terminal, or just click on [/random](random)
+```bash
+$ curl 'scrapi.org/random'
+{
+  "CRDID": 12351,
+  "accessionNumber": "64.291.2",
+  ...
+}
+```
 
 ### Object information (`/object/:id`)
 

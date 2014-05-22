@@ -10,7 +10,7 @@ getRandom = (next) -->
     random_ids = yield request "http://scrapi.org/search?page=#{random_page}"
     ids = JSON.parse(random_ids[0].body).collection.items
     random_page = ids[Math.floor(Math.random() * ids.length)].href
-
-    @body = yield request random_page
+    random_page = yield request random_page
+    @body = random_page[0].body
 
 module.exports = getRandom
