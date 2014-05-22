@@ -21,7 +21,7 @@ app.use mask()
 app.use router(app)
 app.get '/', markdown({ baseUrl: '/', root: __dirname, indexName: 'Readme'})
 app.get '/object/:id', cache(expire: 60*60*24*30), require './libs/getObject'
-app.get '/search/:term', cache(expire: 60*60*24), getIds
+app.get '/search/:term?*', cache(expire: 60*60*24), getIds
 app.get '/search', cache(expire: 60*60*24), getIds
 app.get '/random', require './libs/getRandom'
 
