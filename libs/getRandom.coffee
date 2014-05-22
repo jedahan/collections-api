@@ -2,7 +2,7 @@ q = require 'q'
 request = q.denodeify require 'request'
 
 getRandom = (next) -->
-  page = yield request "scrapi.org/ids"
+  page = yield request "localhost:5000/search"
 
   if max = JSON.parse(page[0].body)._links?.last?.href
     random_page = Math.floor(Math.random() * +(/page=(\d+)/.exec(max)[1])) + 1
