@@ -13,9 +13,12 @@ getIds = require './libs/getIds'
 app = koa()
 
 if app.env is 'development'
-  cache = -> -->
+  cacheOneMonth = -->
+  cacheOneDay = -->
 else
   cache = require 'koa-redis-cache'
+  cacheOneMonth = cache(expire: 60*60*24*30)()
+  cacheOneDay = cache(expire: 60*60*24)()
 
 app.use response_time()
 app.use logger()
@@ -24,10 +27,10 @@ app.use fresh()
 app.use compress()
 app.use mask()
 app.use router(app)
-app.get '/', markdown({ baseUrl: '/', root: __dirname, indexName: 'Readme'})
-app.get '/object/:id', cache(expire: 60*60*24*30), require './libs/getObject'
-app.get '/search/:term?*', cache(expire: 60*60*24), getIds
-app.get '/search', cache(expire: 60*60*24), getIds
+app.get '/', markdown baseUrl: '/', root: __dirname, indexName: 'Readme'
+app.get '/object/:id', cacheOneMonth, require './libs/getObject'
+app.get '/search/:term?*', cacheOneDay, getIds
+app.get '/search', cacheOneDay, getIds
 app.get '/random', require './libs/getRandom'
 
 app.listen process.env.PORT or 5000, ->
