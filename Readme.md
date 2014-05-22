@@ -8,7 +8,7 @@ Try `curl scrapi.org/random` in a terminal, or just click on [/random](random)
 $ curl 'scrapi.org/random'
 {
   "CRDID": 12351,
-  "accessionNumber": "64.291.2",
+  "accessionNumber": "65.211.3",
   ...
 }
 ```
