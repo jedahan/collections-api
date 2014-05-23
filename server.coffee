@@ -33,4 +33,4 @@ app.get '/search', cache(expire: oneDay), getIds
 app.get '/random', require './libs/getRandom'
 
 app.listen process.env.PORT or 5000, ->
-  console.log "[#{process.pid}] listening on port #{+@_connectionKey.split(':')[2]}"
+  console.log "[#{process.pid}] listening on :#{+@_connectionKey.split(':')[2]}"

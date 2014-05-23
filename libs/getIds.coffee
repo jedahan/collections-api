@@ -5,11 +5,12 @@ cheerio = require 'cheerio'
 getIds = (next) -->
   page = yield getEndpoint "?rpp=90&ft=#{@params['term'] or '*'}&pg=#{@query['page'] or '1'}"
   $ = cheerio.load page[0].body
+  host = @host
 
   ids = collection: items: (e for e in $('.list-view-object-info').map ->
     title: $(@).find('.objtitle').text().trim()
     id = + $(@).find('a').attr('href')?.match(/\d+/)?[0]
-    href: "http://scrapi.org/object/#{id}"
+    href: "http://#{host}/object/#{id}"
   )
   get_id = (selector) -> /pg=(\d+)/.exec($(selector)?[0]?.attribs?.href)?[1]
 
