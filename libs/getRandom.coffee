@@ -13,9 +13,9 @@ getRandom = (next) -->
     random_page = yield request random_page
 
     responseTimeMetmuseum = [page,random_ids,random_page]
-      .map (e) -> + e[0].headers['x-response-time-metmuseum'].slice(0,-2)
+      .map (e) -> + e[0].headers['x-response-time-metmuseum'][...-2]
       .reduce (a,b) -> a+b
     @set 'X-Response-Time-Metmuseum', responseTimeMetmuseum + "ms"
-    @body = JSON.parse(random_page[0].body)
+    @body = JSON.parse random_page[0].body
 
 module.exports = getRandom
