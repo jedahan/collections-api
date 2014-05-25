@@ -1,6 +1,7 @@
 koa = require 'koa'
 response_time = require 'koa-response-time'
 logger = require 'koa-logger'
+cors = require 'koa-cors'
 etag = require 'koa-etag'
 fresh = require 'koa-fresh'
 compress = require 'koa-compress'
@@ -21,6 +22,7 @@ else
 
 app.use response_time()
 app.use logger()
+app.use cors()
 app.use etag()
 app.use fresh()
 app.use compress()

@@ -21,6 +21,7 @@
     "coffee-script": "https://github.com/xixixao/coffee-script/tarball/master",
     "koa": "^0.6.1",
     "koa-compress": "^1.0.7",
+    "koa-cors": "0.0.13",
     "koa-etag": "^1.2.4",
     "koa-fresh": "0.0.3",
     "koa-json-mask": "^0.1.0",
