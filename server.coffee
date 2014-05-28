@@ -10,15 +10,17 @@ router = require 'koa-router'
 markdown = require 'koa-markdown'
 
 getIds = require './libs/getIds'
+getObject = require './libs/getObject'
 
 app = koa()
 
-if app.env is 'development'
-  cache = -> (next) --> yield next
-else
+cacheImage = cache = -> -->
+
+if app.env isnt 'development'
   cache = require 'koa-redis-cache'
   oneDay = 60*60*24
   oneMonth = oneDay * 30
+  cacheImage = require './libs/cacheImage'
 
 app.use response_time()
 app.use logger()
@@ -29,8 +31,8 @@ app.use compress()
 app.use mask()
 app.use router(app)
 app.get '/', markdown baseUrl: '/', root: __dirname, indexName: 'Readme'
-app.get '/object/:id', cache(expire: oneMonth), require './libs/getObject'
-app.get '/search/:term?*', cache(expire: oneDay), getIds
+app.get '/object/:id', cache(expire: oneMonth), cacheImage(), getObject
+app.get '/search/:term?*', cache(expire: oneDay), cacheImage(), getIds
 app.get '/search', cache(expire: oneDay), getIds
 app.get '/random', require './libs/getRandom'
 
