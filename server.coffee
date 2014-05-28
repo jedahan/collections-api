@@ -14,9 +14,10 @@ getObject = require './libs/getObject'
 
 app = koa()
 
-cacheImage = cache = -> -->
+cacheImage = cache = -> (next) --> yield next
 
 if app.env isnt 'development'
+  console.log 'cache ON'
   cache = require 'koa-redis-cache'
   oneDay = 60*60*24
   oneMonth = oneDay * 30
