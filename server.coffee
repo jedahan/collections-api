@@ -8,6 +8,7 @@ compress = require 'koa-compress'
 mask = require 'koa-json-mask'
 router = require 'koa-router'
 markdown = require 'koa-markdown'
+serve = require 'koa-static'
 
 getIds = require './libs/getIds'
 getObject = require './libs/getObject'
@@ -29,6 +30,7 @@ app.use cors()
 app.use etag()
 app.use fresh()
 app.use compress()
+app.use serve 'static'
 app.use mask()
 app.use router(app)
 app.get '/', markdown baseUrl: '/', root: __dirname, indexName: 'Readme'
