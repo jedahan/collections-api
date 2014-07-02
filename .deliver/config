@@ -2,5 +2,4 @@
 
 APP="scrapi"
 HOSTS="scrapi.org"
-PORT="80"
 STRATEGY="nodejs"
