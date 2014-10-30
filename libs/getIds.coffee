@@ -16,13 +16,15 @@ getIds = (next) ->
 
   ids['_links'] =
     first: href: 1
-    next: href: get_id $('.next a')
-    prev: href: get_id $('.prev a')
-    last: href: get_id $('.collection-online-pages li:not(.next) a').last()
+    next: href: get_id $('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_lnkNextPage')
+    prev: href: get_id $('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_lnkPrevPage')
+    last: href: get_id $('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_paginationLineItem_6 a')
 
   for link,href of ids['_links']
     if /undefined/.test href.href
       delete ids['_links'][link]
+    else
+      ids['_links'][link].href = "http://#{host}/search/#{@params['term']}?page=#{ids['_links'][link].href}"
 
   cleanup = require './cleanup'
   @body = cleanup ids
