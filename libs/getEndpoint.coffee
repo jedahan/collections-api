@@ -2,7 +2,7 @@ q = require 'q'
 request = q.denodeify require 'request'
 
 getEndpoint = (endpoint) ->
-  (next) -->
+  (next) ->
     api = "http://www.metmuseum.org/collection/the-collection-online/search"
     start = Date.now()
     res = yield request {followRedirect:false, url: api+endpoint}

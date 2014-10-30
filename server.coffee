@@ -15,7 +15,7 @@ getObject = require './libs/getObject'
 
 app = koa()
 
-cacheImage = cache = -> (next) --> yield next
+cacheImage = cache = -> (next) -> yield next
 
 if app.env isnt 'development'
   console.log 'cache ON'

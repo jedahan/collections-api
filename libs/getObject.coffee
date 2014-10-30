@@ -8,7 +8,7 @@ firstCharLowerCase = (str) -> if /^[A-Z]+$/.test str then str else str.charAt(0)
 parser = new xml2js.Parser(trim: true, explicitArray: false, explicitRoot: false, tagNameProcessors: [ firstCharLowerCase ])
 parseString = q.denodeify parser.parseString
 
-getObject = (next) -->
+getObject = (next) ->
   xml = yield getEndpoint "/#{@params['id']}?xml=1"
   object = yield parseString xml[0].body
   @body = cleanup object
