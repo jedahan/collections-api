@@ -20,6 +20,7 @@
     "cheerio": "^0.16.0",
     "coffee-script": "jashkenas/coffeescript",
     "koa": "^0.6.3",
+    "koa-better-ratelimit": "^2.1.2",
     "koa-compress": "^1.0.7",
     "koa-cors": "0.0.13",
     "koa-etag": "^1.2.4",
