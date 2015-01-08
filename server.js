@@ -2,6 +2,8 @@
 (function() {
   var app, cache, compress, cors, etag, fresh, getIds, getObject, koa, limit, logger, markdown, mask, oneDay, oneMonth, ratelimit, response_time, router, serve;
 
+
+
   koa = require('koa');
 
   response_time = require('koa-response-time');
@@ -29,8 +31,8 @@
   getObject = require('./libs/getObject');
 
   app = koa();
-app.env = "production";
-  console.log("app :" + app.env);
+
+  console.log("app env:" + app.env);
 
   cache = ratelimit = function() {
     return function*(next) {
