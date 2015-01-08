@@ -3,10 +3,12 @@
   var getEndpoint, q, request;
 
   q = require('q');
-
-  request = q.denodeify(require('request'));
+  var limit = require("simple-rate-limiter");
+//  request = q.denodeify(require('request'));
+  request = q.denodeify(limit(require('request')).to(10).per(1000));
 
   getEndpoint = function(endpoint) {
+    console.log("calling "+ endpoint);
     return function*(next) {
       var api, delta, res, start;
       api = "http://www.metmuseum.org/collection/the-collection-online/search";

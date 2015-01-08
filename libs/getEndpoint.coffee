@@ -1,5 +1,5 @@
 q = require 'q'
-request = q.denodeify require 'request'
+request = q.denodeify(limit(require("request")).to(10).per(1000))
 
 getEndpoint = (endpoint) ->
   (next) ->

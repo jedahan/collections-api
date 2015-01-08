@@ -29,6 +29,8 @@
   getObject = require('./libs/getObject');
 
   app = koa();
+app.env = "production";
+  console.log("app :" + app.env);
 
   cache = ratelimit = function() {
     return function*(next) {
@@ -49,6 +51,8 @@
         max: 8
       });
     };
+  }else{
+    console.log("IN DEVELOPMENT");
   }
 
   app.use(response_time());
