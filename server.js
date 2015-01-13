@@ -45,6 +45,7 @@
     cache = require('koa-redis-cache');
     oneDay = 60 * 60 * 24;
     oneMonth = oneDay * 30;
+    oneYear  = oneDay * 365;
     console.log('limits ON');
     limit = require('koa-better-ratelimit');
     ratelimit = function(next) {
@@ -82,15 +83,15 @@
   }));
 
   app.get('/object/:id', cache({
-    expire: oneMonth
+    expire: oneYear
   }), ratelimit(), getObject);
 
   app.get('/search/:term', cache({
-    expire: oneDay
+    expire: oneMonth
   }), ratelimit(), getIds);
 
   app.get('/search', cache({
-    expire: oneDay
+    expire: oneMonth
   }), ratelimit(), getIds);
 
   app.get('/random', require('./libs/getRandom'));
