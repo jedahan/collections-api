@@ -16,13 +16,26 @@
         items: (function() {
           var _i, _len, _ref, _results;
           _ref = $('.list-view-object-info').map(function() {
-            var id, _ref, _ref1;
+            var id, _ref, _ref1, title, image_thumb;
             ({
               title: $(this).find('.objtitle').text().trim()
             });
             id = +((_ref = $(this).find('a').attr('href')) != null ? (_ref1 = _ref.match(/\d+/)) != null ? _ref1[0] : void 0 : void 0);
+	    image_thumb = $(this).prev().find('img').attr('src');
+	    var artist = $(this).find('.artist').text().trim();
+	    var accession_number = $(this).find('.objectinfo').eq(2).text().replace(/Accession Number: /,'');
+	    var date = $(this).find('.objectinfo').eq(0).text().replace(/Date: /,'');
+	    var medium = $(this).find('.objectinfo').eq(1).text().replace(/Medium: /,'');
             return {
-              href: "http://" + host + "/object/" + id
+              href: "http://" + host + "/object/" + id,
+              website_href : "http://www.metmuseum.org/collection/the-collection-online/search/"+id,
+              title: $(this).find('.objtitle').text().trim(),
+	      image_thumb : image_thumb,
+	      artist : artist,
+	      accession_number : accession_number,
+	      date : date,
+	      medium : medium
+	     // title: title
             };
           });
           _results = [];
