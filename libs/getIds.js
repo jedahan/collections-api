@@ -26,7 +26,14 @@
 	    var accession_number = $(this).find('.objectinfo').eq(2).text().replace(/Accession Number: /,'');
 	    var date = $(this).find('.objectinfo').eq(0).text().replace(/Date: /,'');
 	    var medium = $(this).find('.objectinfo').eq(1).text().replace(/Medium: /,'');
+	    var gallery = $(this).find('.gallery').text();
+// On view in Gallery
+	    if(gallery.match(/not on view/i)){
+
+	    }
+	    gallery = gallery.replace(/On view in Gallery /,"");
             return {
+	      id : id,
               href: "http://" + host + "/object/" + id,
               website_href : "http://www.metmuseum.org/collection/the-collection-online/search/"+id,
               title: $(this).find('.objtitle').text().trim(),
@@ -34,8 +41,9 @@
 	      artist : artist,
 	      accession_number : accession_number,
 	      date : date,
-	      medium : medium
-	     // title: title
+	      medium : medium,
+	      gallery : gallery
+
             };
           });
           _results = [];
