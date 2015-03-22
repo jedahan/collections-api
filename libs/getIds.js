@@ -22,6 +22,9 @@
             });
             id = +((_ref = $(this).find('a').attr('href')) != null ? (_ref1 = _ref.match(/\d+/)) != null ? _ref1[0] : void 0 : void 0);
 	    image_thumb = $(this).prev().find('img').attr('src');
+	    if(image_thumb.match(/^\//)){
+		image_thumb = "http://metmuseum.org" + image_thumb;
+	    }
 	    var artist = $(this).find('.artist').text().trim();
 	    var accession_number = $(this).find('.objectinfo').eq(2).text().replace(/Accession Number: /,'');
 	    var date = $(this).find('.objectinfo').eq(0).text().replace(/Date: /,'');
