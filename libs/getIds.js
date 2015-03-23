@@ -8,7 +8,7 @@
 
   getIds = function*(next) {
     var $, cleanup, e, get_id, host, href, ids, link, page, _ref;
-    page = (yield getEndpoint("?ft=" + (this.params['term'] || '*') + "&pg=" + (this.query['page'] || '1') + "&rpp=90"));
+    page = (yield getEndpoint("?ft=" + (this.params['term'] || '*') + "&pg=" + (this.query['page'] || '1') + (this.query['gallerynos']? '&gallerynos='+this.query['gallerynos'] : '') + "&rpp=90"));
     $ = cheerio.load(page[0].body);
     host = this.host;
     ids = {
