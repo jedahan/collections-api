@@ -45,8 +45,10 @@ $ curl 'scrapi.org/search/mirror'
 
 }
 ```
-additional Params:
+### additional Params in search:
+
 &page=X - for additional pages
+
 &gallerynos=X for only objects in that gallery
 
 ### Filtering with the `fields` parameter
