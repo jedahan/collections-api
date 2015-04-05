@@ -37,13 +37,14 @@
 	    gallery = gallery.replace(/On view in Gallery /,"");
             return {
 	      id : id,
+	      CRDID : id,
               href: "http://" + host + "/object/" + id,
               website_href : "http://www.metmuseum.org/collection/the-collection-online/search/"+id,
               title: $(this).find('.objtitle').text().trim(),
 	      image_thumb : image_thumb,
-	      artist : artist,
-	      accession_number : accession_number,
-	      date : date,
+	      primaryArtistNameOnly : artist,
+	      accessionNumber : accession_number,
+	      dateText : date,
 	      medium : medium,
 	      gallery : gallery
 

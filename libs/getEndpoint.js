@@ -5,7 +5,7 @@
   q = require('q');
   var limit = require("simple-rate-limiter");
 //  request = q.denodeify(require('request'));
-  request = q.denodeify(limit(require('request')).to(1).per(1000));
+  request = q.denodeify(limit(require('request')).to(2).per(1000));
 
   getEndpoint = function(endpoint) {
     console.log("calling "+ endpoint);
