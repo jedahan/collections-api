@@ -1,25 +1,21 @@
-var get, getRandom, r, request, thunkify
-var util = require('util')
-r = require('ramda')
+const r = require('ramda')
 
-thunkify = require('thunkify')
+const thunkify = require('thunkify')
+const request = thunkify(require('request'))
 
-request = thunkify(require('request'))
-
-get = function *(url) {
+const get = function *(url) {
   return ((yield request({
     json: true,
     url: url
   })))[0]
 }
 
-getRandom = function *(next) {
+const getRandom = function *(next) {
   var ids, ids_page, object, page, random_page, responseTime, responseTimeMetmuseum, _ref, _ref1
   page = (yield get('http://' + this.host + '/search'))
   random_page = Math.ceil(Math.random() * ((_ref = page.body._links) != null ? (_ref1 = _ref.last) != null ? _ref1.href : void 0 : void 0))
   ids_page = (yield get('http://' + this.host + '/search?page=' + random_page))
   ids = ids_page.body.collection.items
-  console.log(util.inspect(ids_page.body))
   if (ids !== 0) {
     object = (yield get(ids[Math.floor(Math.random() * ids.length)].href))
   }
