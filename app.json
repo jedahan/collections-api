@@ -1,0 +1,11 @@
+{
+  "name": "Collections Api",
+  "description": "frontend api services",
+  "keywords": [
+    "scrape",
+    "museum",
+    "api"
+  ],
+  "addons": [],
+  "env": {}
+}
