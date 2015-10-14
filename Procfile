@@ -1,2 +1,2 @@
-web: node_modules/.bin/coffee --nodejs --harmony server.coffee
+web: npm start
 cache: redis-server
