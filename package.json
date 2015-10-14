@@ -50,5 +50,8 @@
   "repository": {
     "type": "git",
     "url": "http://github.com/jedahan/collections-api.git"
+  },
+  "devDependencies": {
+    "standard": "^5.3.1"
   }
 }
