@@ -4,12 +4,12 @@
 
   traverse = require('traverse');
 
-  cleanup = function(object) {
-    delete object['$'];
-    traverse(object).forEach(function(e) {
-      var prop, _ref;
-      if (this.notLeaf && ((_ref = this.key) != null ? _ref.contains("List") : void 0)) {
-        prop = e[this.key.slice(0, -4)];
+  cleanup = function (object) {
+    delete object['$']
+    traverse(object).forEach(function (e) {
+      var prop, _ref
+      if (this.notLeaf && ((_ref = this.key) != null ? _ref.indexOf('List') !== -1 : void 0)) {
+        prop = e[this.key.slice(0, -4)]
         if (prop instanceof Array) {
           return prop;
         }
