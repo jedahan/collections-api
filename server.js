@@ -71,7 +71,7 @@ app.get('/search', cache({
 
 app.get('/random', require('./libs/getRandom'))
 
-app.listen(process.env.PORT || 5000, function () {
+app.listen(process.env.DOKKU_NGINX_PORT || process.env.PORT || 5000, function () {
   const key = this._connectionKey.split(':')
   const port = key[key.length-1]
   return console.log(`[${process.pid}] listening on :${port}`)
