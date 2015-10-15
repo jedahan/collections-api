@@ -72,5 +72,7 @@ app.get('/search', cache({
 app.get('/random', require('./libs/getRandom'))
 
 app.listen(process.env.PORT || 5000, function () {
-  return console.log(`[${process.pid}] listening on :${+this._connectionKey.split(':')[2]}`)
+  const key = this._connectionKey.split(':')
+  const port = key[key.length-1]
+  return console.log(`[${process.pid}] listening on :${port}`)
 })
