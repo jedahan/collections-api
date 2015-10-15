@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-APP="scrapi"
-HOSTS="scrapi.org"
-STRATEGY="nodejs"

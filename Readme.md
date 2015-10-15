@@ -90,4 +90,4 @@ Dedicated to the memory of [Aaron Swartz](http://en.wikipedia.org/wiki/Aaron_Swa
 The API requires [node.js](http://nodejs.org), uses [redis](redis.io) for caching, and is built on the [koa](koajs.com) web framework.
 Install the required libraries with `npm install`. You can start the server and redis together with `foreman start` if you have [foreman](http://ddollar.github.io/foreman/) (recommended), or if you have some other way of having redis run, just do `npm start`.
 
-To make deployments easy, we use  [deliver](https://github.com/gerhard/deliver). Install deliver, edit `.deliver/config`, and run `deliver` to push the latest changes to a remote server. This has been tested on OSX 10.11 and Ubuntu 14.04.
+The current version on [scrapi.org](scrapi.org) is running on linode, running dokku. So `git push dokku master` just werks :).
