@@ -19,9 +19,9 @@ const getRandom = function *(next) {
   if (ids !== 0) {
     object = (yield get(ids[Math.floor(Math.random() * ids.length)].href))
   }
-  responseTime = function (x) {
+  const responseTime = function (x) {
     if (x) {
-      return x.headers['x-response-time-metmuseum'].slice(0, -2)
+      return +(x.headers['x-response-time-metmuseum'].slice(0, -2))
     }
     return 0
   }
