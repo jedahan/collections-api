@@ -11,11 +11,12 @@ const get = function *(url) {
 }
 
 const getRandom = function *(next) {
-  var ids, ids_page, object, page, random_page, responseTime, responseTimeMetmuseum, _ref, _ref1
-  page = (yield get('http://' + this.host + '/search'))
-  random_page = Math.ceil(Math.random() * ((_ref = page.body._links) != null ? (_ref1 = _ref.last) != null ? _ref1.href : void 0 : void 0))
-  ids_page = (yield get('http://' + this.host + '/search?page=' + random_page))
-  ids = ids_page.body.collection.items
+  var object, _ref, _ref1
+  const page = (yield get('http://' + this.host + '/search'))
+  const max_page = /page=(\d+)$/.exec((_ref = page.body._links) != null ? (_ref1 = _ref.last) != null ? _ref1.href : void 0 : void 0)
+  const random_page = Math.ceil(Math.random() * parseInt(max_page[1]))
+  const ids_page = (yield get('http://' + this.host + '/search?page=' + random_page))
+  const ids = ids_page.body.collection.items
   if (ids !== 0) {
     object = (yield get(ids[Math.floor(Math.random() * ids.length)].href))
   }
@@ -25,7 +26,7 @@ const getRandom = function *(next) {
     }
     return 0
   }
-  responseTimeMetmuseum = r.sum(r.map(responseTime, [page, ids_page, object]))
+  const responseTimeMetmuseum = r.sum(r.map(responseTime, [page, ids_page, object]))
   this.set('X-Response-Time-Metmuseum', responseTimeMetmuseum + 'ms')
   if (object) {
     this.body = object.body
