@@ -1,6 +1,6 @@
 # scrapi, a metropolitan museum collections api
 
-[scrAPI.org](scrapi.org) is an api that grabs object information from the metropolitan museum's [collections](http://metmuseum.org/collection) website.
+[scrAPI.org](http://scrapi.org) is an api that grabs object information from the metropolitan museum's [collections](http://metmuseum.org/collection) website.
 
 ### Get a random object (`/random`)
 Try `curl scrapi.org/random` in a terminal, or just click on [/random](random)
@@ -79,15 +79,15 @@ I like the following fields for basic object information: `fields=title,primaryA
 
 ### Guidelines
 
-The code is [CC0](http://creativecommons.org/publicdomain/zero/1.0), but if you do anything interesting with the data, it would be nice to give attribution to The Metropolitan Museum of Art. If you do anything interesting with the code, it would be nice to give attribution to the contributors, or even better, become one!
+The code is [CC0](https://creativecommons.org/publicdomain/zero/1.0/), but if you do anything interesting with the data, it would be nice to give attribution to The Metropolitan Museum of Art. If you do anything interesting with the code, it would be nice to give attribution to the contributors, or even better, become one!
 
 Please submit all questions, bugs and feature requests to [the issue page](https://github.com/jedahan/collections-api/issues).
 
-Dedicated to the memory of [Aaron Swartz](http://en.wikipedia.org/wiki/Aaron_Swartz).
+Dedicated to the memory of [Aaron Swartz](https://en.wikipedia.org/wiki/Aaron_Swartz).
 
 ### Installation and Deployment
 
-The API requires [node.js](http://nodejs.org), uses [redis](redis.io) for caching, and is built on the [koa](koajs.com) web framework.
-Install the required libraries with `npm install`. You can start the server and redis together with `foreman start` if you have [foreman](http://ddollar.github.io/foreman/) (recommended), or if you have some other way of running redis, just do `npm start`.
+The API requires [node.js](https://nodejs.org/), uses [redis](http://redis.io/) for caching, and is built on the [koa](http://koajs.com/) web framework.
+Install the required libraries with `npm install`. You can start the server and redis together with `foreman start` if you have [foreman](https://ddollar.github.io/foreman/) (recommended), or if you have some other way of running redis, just do `npm start`.
 
-The current version on [scrapi.org](scrapi.org) is running on linode, running dokku. So `git push dokku master` just werks :).
+The current version on [scrapi.org](http://scrapi.org) is running on linode, running dokku. So `git push dokku master` just werks :).
