@@ -1,34 +1,27 @@
-;(function () {
-  var cleanup, traverse
+const traverse = require('traverse')
 
-  traverse = require('traverse')
-
-  cleanup = function (object) {
-    delete object['$']
-    traverse(object).forEach(function (e) {
-      var prop, _ref
-      if (this.notLeaf && ((_ref = this.key) != null ? _ref.indexOf('List') !== -1 : void 0)) {
-        prop = e[this.key.slice(0, -4)]
-        if (prop instanceof Array) {
-          return prop
+const cleanup = function (object) {
+  delete object['$']
+  traverse(object).forEach(function (e) {
+    if (this.notLeaf && this.key != null && this.key.indexOf('List') > -1) {
+      const prop = e[this.key.slice(0, -4)]
+      return prop instanceof Array ? prop : [prop]
+    }
+    switch (e) {
+      case '':
+        return this.remove
+      case 'false':
+        return false
+      case 'true':
+        return true
+      default:
+        const i = parseInt(e)
+        if (!isNaN(i)){
+          return i
         }
-        return [prop]
-      }
-      switch (e) {
-        case '':
-          return this.remove
-        case 'false':
-          return false
-        case 'true':
-          return true
-        default:
-          if (!isNaN(+e)) {
-            return +e
-          }
-      }
-    })
-    return object
-  }
+    }
+  })
+  return object
+}
 
-  module.exports = cleanup
-}).call(this)
+module.exports = cleanup

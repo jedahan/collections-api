@@ -10,28 +10,32 @@ const get = function *(url) {
   })))[0]
 }
 
+const getHeader = (headerName) =>
+  (page) => page && page.headers[headerName] ? page.headers[headerName] : null
+
 const getRandom = function *(next) {
-  var object, _ref, _ref1
   const page = (yield get('http://' + this.host + '/search'))
-  const max_page = /page=(\d+)$/.exec((_ref = page.body._links) != null ? (_ref1 = _ref.last) != null ? _ref1.href : void 0 : void 0)
-  const random_page = Math.ceil(Math.random() * parseInt(max_page[1]))
-  const ids_page = (yield get('http://' + this.host + '/search?page=' + random_page))
-  const ids = ids_page.body.collection.items
-  if (ids !== 0) {
-    object = (yield get(ids[Math.floor(Math.random() * ids.length)].href))
-  }
-  const responseTime = function (x) {
-    if (x) {
-      return +(x.headers['x-response-time-metmuseum'].slice(0, -2))
+  if (page.body && page.body._links && page.body._links.last) {
+    const max_page = +(page.body._links.last.href.match(/(\d+)/)[0])
+    const random_page = Math.ceil(Math.random() * max_page)
+    const ids_page = (yield get('http://' + this.host + '/search?page=' + random_page))
+
+    if (ids_page.body && ids_page.body.collection && ids_page.body.collection.items) {
+      const ids = ids_page.body.collection.items
+      if (ids.length) {
+        const object = (yield get(ids[Math.floor(Math.random() * ids.length)].href))
+        this.body = object ? object.body : {}
+
+        const responseTime = function (x) {
+          if (x) {
+            return +(x.headers['x-response-time-metmuseum'].slice(0, -2))
+          }
+          return 0
+        }
+        const responseTimeMetmuseum = r.sum(r.map(responseTime, [page, ids_page, object]))
+        this.set('X-Response-Time-Metmuseum', responseTimeMetmuseum + 'ms')
+      }
     }
-    return 0
-  }
-  const responseTimeMetmuseum = r.sum(r.map(responseTime, [page, ids_page, object]))
-  this.set('X-Response-Time-Metmuseum', responseTimeMetmuseum + 'ms')
-  if (object) {
-    this.body = object.body
-  } else {
-    this.body = {}
   }
   return this.body
 }
