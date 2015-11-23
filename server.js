@@ -10,7 +10,7 @@ const etag = require('koa-etag')
 const fresh = require('koa-fresh')
 const compress = require('koa-compress')
 const mask = require('koa-json-mask')
-const router = require('koa-router')
+const router = require('koa-router')()
 const markdown = require('koa-markdown')
 const serve = require('koa-static')
 const getIds = require('./libs/getIds')
@@ -49,27 +49,28 @@ app.use(fresh())
 app.use(compress())
 app.use(serve('static'))
 app.use(mask())
-app.use(router(app))
 
-app.get('/', markdown({
+router.get('/', markdown({
   baseUrl: '/',
   root: __dirname,
   indexName: 'Readme'
 }))
 
-app.get('/object/:id', cache({
+router.get('/object/:id', cache({
   expire: oneYear
 }), ratelimit(), getObject)
 
-app.get('/search/:term', cache({
+router.get('/search/:term', cache({
   expire: oneMonth
 }), ratelimit(), getIds)
 
-app.get('/search', cache({
+router.get('/search', cache({
   expire: oneMonth
 }), ratelimit(), getIds)
 
-app.get('/random', require('./libs/getRandom'))
+router.get('/random', require('./libs/getRandom'))
+
+app.use(router.routes())
 
 app.listen(process.env.PORT || 6666, function () {
   const key = this._connectionKey.split(':')
