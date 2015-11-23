@@ -5,9 +5,7 @@
   "contributors": [
     "Jonathan Dahan"
   ],
-  "licenses": [
-    "ISC"
-  ],
+  "license": "ISC",
   "version": "1.0.0",
   "description": "frontend api services",
   "author": "Jonathan Dahan <jonathan@jonathan.is>",
