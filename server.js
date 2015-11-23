@@ -53,7 +53,7 @@ app.use(mask())
 router.get('/', markdown({
   baseUrl: '/',
   root: __dirname,
-  indexName: 'Readme'
+  indexName: 'readme'
 }))
 
 router.get('/object/:id', cache({
