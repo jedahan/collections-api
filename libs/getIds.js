@@ -57,36 +57,29 @@ const getItem = function (el, host) {
 
 const getIds = function *(next) {
   const host = this.host
-  const page = (yield getEndpoint('?' + buildQueryString(this.params) + '&rpp=90'))[0].body
+  const page = (yield getEndpoint('?' + buildQueryString(this.params) + '&rpp=90'))
   const $ = cheerio.load(page[0].body)
-  const ids = {
-    collection: {
-      items: $('.list-view-object-info').map((element) => getItem($(element), host))
-    },
-    _links: {
-      first: { href: 1 },
-      next: { href: get_id($('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_lnkNextPage')) },
-      prev: { href: get_id($('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_lnkPrevPage')) },
-      last: { href: get_id($('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_paginationLineItem_6 a')) }
-    }
-  }
-  const get_id = function (selector) {
+
+  const get_href = (selector) => {
     const selection = $(selector)
     if (selection && selection[0] && selection[0].attribs) {
-      const extraction = /pg=(\d+)/.exec(selection[0].attribs.href)
+      const extraction = /term=([\w\*]+).*pg=(\d+)/.exec(unescape(selection[0].attribs.href))
       if (extraction) {
-        return extraction[1]
+        return `http://${host}/search/${extraction[1]}?page=${extraction[2]}`
       }
     }
     return null
   }
-  // TODO: put this in cleanup?
-  for (let link in ids['_links']) {
-    const href = ids['_links'][link]
-    if (href.href) {
-      ids['_links'][link].href = `http://${host}/search/${this.params['term']}?page=${href.href}`
-    } else {
-      delete ids['_links'][link]
+
+  const ids = {
+    collection: {
+      items: $('.list-view-object-info').map((_, element) => getItem($(element), host)).get()
+    },
+    _links: {
+      first: { href: get_href($('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_paginationLineItem_6 a')).replace(/\d+$/, '1') },
+      next: { href: get_href($('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_lnkNextPage')) },
+      prev: { href: get_href($('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_lnkPrevPage')) },
+      last: { href: get_href($('#phcontent_0_phfullwidthcontent_0_paginationWidget_rptPagination_paginationLineItem_6 a')) }
     }
   }
 
