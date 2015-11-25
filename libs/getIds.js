@@ -30,7 +30,7 @@ const getItem = function (el, host) {
   }
 
   let image_thumb = el.prev().find('img').attr('src')
-  if (image_thumb.match(/^\//)) {
+  if (image_thumb && image_thumb.match(/^\//)) {
     image_thumb = 'http://metmuseum.org' + image_thumb
   }
   const title = el.find('.objtitle').text().trim()
