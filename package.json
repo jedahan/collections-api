@@ -19,6 +19,7 @@
     "koa": "^0.6.3",
     "koa-better-ratelimit": "^2.1.2",
     "koa-compress": "^1.0.7",
+    "koa-conditional-get": "^1.0.3",
     "koa-cors": "0.0.16",
     "koa-etag": "^2.0.1",
     "koa-fresh": "0.0.3",
