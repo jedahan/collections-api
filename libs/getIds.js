@@ -1,9 +1,8 @@
 'use strict'
 
 const getEndpoint = require('./getEndpoint')
-
+const cleanup = require('./cleanup')
 const cheerio = require('cheerio')
-
 
 const buildQueryString = function (context) {
   let query_string = ''
@@ -89,7 +88,7 @@ const getIds = function *(next) {
       delete ids['_links'][link]
     }
   }
-  const cleanup = require('./cleanup')
+
   this.body = cleanup(ids)
   return this.body
 }
