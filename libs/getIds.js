@@ -15,10 +15,11 @@ const buildQueryString = function (context) {
   for (let key in conversions) {
     const value = context[key] || conversions[key].defaults
     if (value) {
-      query_string += `${key}=${value}`
+      query_string += `${key}=${value}&`
     }
   }
-  return query_string
+
+  return query_string.slice(0, -1)
 }
 
 const getItem = function (el, host) {
