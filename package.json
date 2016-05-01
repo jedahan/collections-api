@@ -40,8 +40,8 @@
     "xml2js": "^0.4.2"
   },
   "engines": {
-    "node": "^5.1.0",
-    "npm": "^3.4.1"
+    "node": "^6.0.0",
+    "npm": "^3.8.6"
   },
   "scripts": {
     "start": "node server.js",
