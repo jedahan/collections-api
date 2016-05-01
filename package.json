@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "cheerio": "^0.20.0",
-    "koa": "^0.6.3",
+    "koa": "^1.2.0",
     "koa-better-ratelimit": "^2.1.2",
     "koa-compress": "^1.0.7",
     "koa-conditional-get": "^1.0.3",
