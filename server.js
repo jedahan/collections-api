@@ -76,6 +76,6 @@ app.use(router.routes())
 
 app.listen(process.env.PORT || 6666, function () {
   const key = this._connectionKey.split(':')
-  const port = key[key.length-1]
+  const port = key[key.length - 1]
   return console.log(`[${process.pid}] listening on :${port}`)
 })

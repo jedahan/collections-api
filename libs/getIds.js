@@ -5,9 +5,9 @@ const getEndpoint = require('./getEndpoint')
 const buildQueryString = function (context) {
   let query_string = ''
   const conversions = {
-    'term': { query: `q`, defaults: '*' },
-    'page': { query: `page`, defaults: '1' },
-    'gallery': { query: `gallerynos` }
+    'term': { query: 'q', defaults: '*' },
+    'page': { query: 'page', defaults: '1' },
+    'gallery': { query: 'gallerynos' }
   }
 
   for (let key in conversions) {
@@ -21,7 +21,6 @@ const buildQueryString = function (context) {
 }
 
 const getIds = function *(next) {
-  const host = this.host
   const response = (yield getEndpoint('/collectionlisting?' + buildQueryString(this.params)))
   const stuff = JSON.parse(response[0].body)
   this.body = stuff

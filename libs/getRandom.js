@@ -10,9 +10,6 @@ const get = function *(url) {
   })))[0]
 }
 
-const getHeader = (headerName) =>
-  (page) => page && page.headers[headerName] ? page.headers[headerName] : null
-
 const getRandom = function *(next) {
   const index_page = (yield get('http://' + this.host + '/search'))
 
