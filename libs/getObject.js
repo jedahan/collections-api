@@ -16,7 +16,7 @@ const parser = new xml2js.Parser({
 const parseString = q.denodeify(parser.parseString)
 
 const getObject = function *(next) {
-  const xml = (yield getEndpoint('/' + this.params['id'] + '?xml=1'))
+  const xml = (yield getEndpoint('/' + this.params['id'] + '?xml=1', 'http://metmuseum.org/art/collection/search'))
   const object = (yield parseString(xml[0].body))
   this.body = cleanup(object)
   return this.body
