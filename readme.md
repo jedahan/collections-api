@@ -88,7 +88,7 @@ Dedicated to the memory of [Aaron Swartz](https://en.wikipedia.org/wiki/Aaron_Sw
 ### Installation and Deployment
 
 The API requires [node.js](https://nodejs.org/), uses [redis](http://redis.io/) for caching, and is built on the [koa](http://koajs.com/) web framework.
-Install the required libraries with `npm install`. You can start the server and redis together with `foreman start` if you have [foreman](https://ddollar.github.io/foreman/) (recommended), or if you have some other way of running redis, just do `npm start`.
+Install the required libraries with `yarn`. You can start the server and redis together with `foreman start` if you have [foreman](https://ddollar.github.io/foreman/) (recommended), or if you have some other way of running redis, just do `yarn start`.
 
 
 The current version on [scrapi.org](http://scrapi.org) is running on linode, deploying over git via dokku. So `git remote add dokku dokku@scrapi.org:scrapi.org; git push dokku master` just werks ;)
