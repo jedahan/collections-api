@@ -74,7 +74,7 @@ router.get('/random', require('./libs/getRandom'))
 
 app.use(router.routes())
 
-app.listen(process.env.PORT || 6666, function () {
+app.listen(process.env.PORT || 8080, function () {
   const key = this._connectionKey.split(':')
   const port = key[key.length - 1]
   return console.log(`[${process.pid}] listening on :${port}`)
