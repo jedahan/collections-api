@@ -3,7 +3,7 @@
 const getEndpoint = require('./getEndpoint')
 
 const buildQueryString = function (context) {
-  let query_string = ''
+  let queryString = ''
   const conversions = {
     'term': { query: 'q', defaults: '*' },
     'page': { query: 'page', defaults: '1' },
@@ -13,11 +13,11 @@ const buildQueryString = function (context) {
   for (let key in conversions) {
     const value = context[key] || conversions[key].defaults
     if (value) {
-      query_string += `${key}=${value}&`
+      queryString += `${key}=${value}&`
     }
   }
 
-  return query_string.slice(0, -1)
+  return queryString.slice(0, -1)
 }
 
 const getIds = function *(next) {

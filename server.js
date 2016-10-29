@@ -3,7 +3,7 @@
 var ratelimit, oneDay, oneMonth, oneYear, limit
 
 const koa = require('koa')
-const response_time = require('koa-response-time')
+const responseTime = require('koa-response-time')
 const logger = require('koa-logger')
 const cors = require('koa-cors')
 const conditional = require('koa-conditional-get')
@@ -42,7 +42,7 @@ if (app.env !== 'development') {
   }
 }
 
-app.use(response_time())
+app.use(responseTime())
 app.use(logger())
 app.use(cors())
 app.use(conditional())
