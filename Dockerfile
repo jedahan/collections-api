@@ -1,4 +1,4 @@
-FROM node:latest
+FROM mhart/alpine-node
 EXPOSE 8080
 COPY server.js package.json yarn.lock readme.md layout.html /src/
 COPY libs /src/libs

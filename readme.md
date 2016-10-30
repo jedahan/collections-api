@@ -89,6 +89,23 @@ Dedicated to the memory of [Aaron Swartz](https://en.wikipedia.org/wiki/Aaron_Sw
 
 The API requires [node.js](https://nodejs.org/), uses [redis](http://redis.io/) for caching, and is built on the [koa](http://koajs.com/) web framework.
 
-Install the required libraries with `yarn`. You can start the server and redis together with `foreman start` if you have [foreman](https://ddollar.github.io/foreman/) (recommended), or if you have some other way of running redis, just do `yarn start`. There is WIP support for docker.
+If you already have nodejs installed:
 
-The current version on [scrapi.org](http://scrapi.org) is running on linode, deploying over git via dokku. So `git remote add dokku dokku@scrapi.org:scrapi.org; git push dokku master` just werks ;)
+    which yarn || npm install -g yarn
+    yarn
+    yarn start
+    open 127.0.0.1:8080 || xdg-open 127.0.0.1:8080
+
+If you don't want to have to setup node, yarn, and redis on your local machine, I published a docker image:
+
+    which docker || { sudo apt-get install -y docker || cask install docker }
+    docker pull jedahan/collections-api
+    docker run -d -p 8080:8080 --name collections-api jedahan/collections-api
+    open 127.0.0.1:8080 || xdg-open 127.0.0.1:8080
+
+You can build the docker image yourself if you want:
+
+    which docker || { sudo apt-get install -y docker || cask install docker }
+    docker build -t jedahan/collection-api:latest .
+    docker run -d -p 8080:8080 --name collections-api jedahan/collections-api
+    open 127.0.0.1:8080 || xdg-open 127.0.0.1:8080
