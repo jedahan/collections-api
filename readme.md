@@ -102,6 +102,7 @@ If you don't want to have to setup node, yarn, and redis on your local machine, 
     docker pull jedahan/collections-api
     docker run -d -p 8080:8080 --name collections-api jedahan/collections-api
     open 127.0.0.1:8080 || xdg-open 127.0.0.1:8080
+    curl localhost:8080/random
 
 You can build the docker image yourself if you want:
 
@@ -109,3 +110,4 @@ You can build the docker image yourself if you want:
     docker build -t jedahan/collections-api:latest .
     docker run -d -p 8080:8080 --name collections-api jedahan/collections-api
     open 127.0.0.1:8080 || xdg-open 127.0.0.1:8080
+    curl localhost:8080/random
