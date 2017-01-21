@@ -106,6 +106,6 @@ If you don't want to have to setup node, yarn, and redis on your local machine, 
 You can build the docker image yourself if you want:
 
     which docker || { sudo apt-get install -y docker || cask install docker }
-    docker build -t jedahan/collection-api:latest .
+    docker build -t jedahan/collections-api:latest .
     docker run -d -p 8080:8080 --name collections-api jedahan/collections-api
     open 127.0.0.1:8080 || xdg-open 127.0.0.1:8080
