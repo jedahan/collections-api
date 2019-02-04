@@ -1,3 +1,5 @@
+# ⚠️ the museum api has changed a bunch, this needs a rewrite
+
 # scrapi, a metropolitan museum collections api
 
 [scrAPI.org](http://scrapi.org) is an api that grabs object information from the metropolitan museum's [collections](http://metmuseum.org/collection) website.
